@@ -1,0 +1,16 @@
+﻿@model Product
+
+<form method="post" asp-action="Delete">
+
+    <label>Product Name</label>
+    <input asp-for="ProductName" class="form-control" readonly />
+
+    <label>Category</label>
+    <input value="@Model.Category.CategoryName" class="form-control" readonly />
+
+    <label>Supplier</label>
+    <input value="@Model.Supplier.SupplierName" class="form-control" readonly />
+
+    <button type="submit" class="btn btn-danger mt-3">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary mt-3">Cancel</a>
+</form>

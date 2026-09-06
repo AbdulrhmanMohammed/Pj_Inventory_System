@@ -1,0 +1,38 @@
+﻿@model IEnumerable<StockIn>
+
+@{
+    ViewData["Title"] = "Stock In Page";
+}
+
+<div class="text-end mb-3">
+    <a asp-action="Create" class="btn btn-primary">Add Stock In</a>
+</div>
+
+<div class="container mt-2">
+    <table class="table table-primary table-hover">
+        <thead>
+            <tr>
+                <th>StockInID</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Date In</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.StockInID</td>
+                    <td>@item.Product.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.DateIn.ToShortDateString()</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.StockInID" class="btn btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.StockInID" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

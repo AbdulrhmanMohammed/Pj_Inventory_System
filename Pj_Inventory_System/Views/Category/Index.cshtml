@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Category Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">Welcome  To Category Page</a>.</p>
+</div>
+
+<div class="text-end">
+    <a href="@Url.Action("Create", "Category")" class="btn btn-primary">Create New Category</a>
+</div>
+<div class="container mt-2">
+    <table class="table  table-primary table-hover">
+        <thead>
+            <tr>
+                <th>CategoryID</th>
+                <th>CategoryName</th>
+                <th>Products</th>
+
+             
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td>@category.CategoryID</td>
+                    <td>@category.CategoryName</td>
+                    <td>@category.Products?.Count</td>
+                    <td>
+
+                        <a asp-action="Edit" asp-route-id="@category.CategoryID" class="btn btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@category.CategoryID" class="btn btn-danger">Delete</a>
+                    </td>
+
+                    
+                  
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

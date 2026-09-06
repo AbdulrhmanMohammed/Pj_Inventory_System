@@ -1,0 +1,22 @@
+﻿@model Product
+
+<form method="post" asp-action="Edit">
+    <input type="hidden" asp-for="ProductID" />
+
+    <label>Product Name</label>
+    <input asp-for="ProductName" class="form-control" />
+
+    <label>Category</label>
+    <select asp-for="CategoryID" class="form-control" asp-items="ViewBag.Categories"></select>
+
+    <label>Supplier</label>
+    <select asp-for="SupplierID" class="form-control" asp-items="ViewBag.Suppliers"></select>
+
+    <label>Quantity</label>
+    <input asp-for="QuantityInStock" class="form-control" />
+
+    <label>Unit Price</label>
+    <input asp-for="UnitPrice" class="form-control" />
+
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>

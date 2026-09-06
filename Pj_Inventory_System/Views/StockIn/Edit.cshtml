@@ -1,0 +1,16 @@
+﻿@model StockIn
+
+<form method="post" asp-action="Edit">
+    <input type="hidden" asp-for="StockInID" />
+
+    <label>Product</label>
+    <select asp-for="ProductID" class="form-control" asp-items="ViewBag.Products"></select>
+
+    <label>Quantity</label>
+    <input asp-for="Quantity" class="form-control" />
+
+    <label>Date In</label>
+    <input asp-for="DateIn" type="date" class="form-control" />
+
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>

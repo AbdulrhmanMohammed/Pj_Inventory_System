@@ -1,0 +1,38 @@
+﻿@model IEnumerable<StockOut>
+
+@{
+    ViewData["Title"] = "Stock Out Page";
+}
+
+<div class="text-end mb-3">
+    <a asp-action="Create" class="btn btn-primary">Add Stock Out</a>
+</div>
+
+<div class="container mt-2">
+    <table class="table table-primary table-hover">
+        <thead>
+            <tr>
+                <th>StockOutID</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Date Out</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.StockOutID</td>
+                    <td>@item.Product.ProductName</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.DateOut.ToShortDateString()</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.StockOutID" class="btn btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.StockOutID" class="btn btn-danger">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
