@@ -58,16 +58,25 @@ namespace Pj_Inventory_System.Controllers
         public IActionResult Delete(int id)
         {
             var category = _db.Categories.Find(id);
-            if (category == null) return NotFound();
+            if (category == null)
+            {
+
+                return NotFound();
+
+            }
             return View(category);
         }
 
         [HttpPost]
         public IActionResult Delete(Category category)
         {
-            _db.Categories.Remove(category);
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Remove(category);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(category);
         }
     }
 }

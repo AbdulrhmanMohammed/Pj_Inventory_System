@@ -24,7 +24,7 @@
             {
                 <tr>
                     <td>@item.StockOutID</td>
-                    <td>@item.Product.ProductName</td>
+                    <td>@item.Product?.ProductName</td>
                     <td>@item.Quantity</td>
                     <td>@item.DateOut.ToShortDateString()</td>
                     <td>

@@ -24,7 +24,7 @@
                 <tr>
                     <td>@supplier.SupplierID</td>
                     <td>@supplier.SupplierName</td>
-                    <td>@supplier.Products.Count</td>
+                    <td>@supplier.Products?.Count</td>
                     <td>
                         <a asp-action="Edit" asp-route-id="@supplier.SupplierID" class="btn btn-primary">Edit</a>
                         <a asp-action="Delete" asp-route-id="@supplier.SupplierID" class="btn btn-danger">Delete</a>
