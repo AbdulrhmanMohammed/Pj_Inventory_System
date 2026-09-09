@@ -1,0 +1,435 @@
+﻿@using Pj_Inventory_System.Models
+@model IEnumerable<User>
+
+@{
+    ViewData["Title"] = "Users";
+    int counter = 1;
+}
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2>Users List</h2>
+
+        <button class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#createModal">
+            Create User
+        </button>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- Users Table -->
+    <!-- ============================= -->
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-primary">
+            <tr>
+                <th>#</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var user in Model)
+            {
+                <tr>
+
+                    <td>@counter</td>
+
+                    <td>@user.Id</td>
+
+                    <td>@user.Name</td>
+
+                    <td>@user.Username</td>
+
+                    <td>@user.Email</td>
+
+                    <td>
+
+                        <!-- Edit -->
+                        <button class="btn btn-warning"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editModal-@user.Id">
+                            Edit
+                        </button>
+
+
+                        <!-- Delete -->
+                        <button class="btn btn-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal-@user.Id">
+                            Delete
+                        </button>
+
+                        <a asp-controller="Users"
+                           asp-action="ManageRoles"
+                           asp-route-id="@user.Id"
+                           class="btn btn-warning">
+                            Roles
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                counter++;
+            }
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- ================================================= -->
+<!-- CREATE USER MODAL -->
+<!-- ================================================= -->
+
+<div class="modal fade"
+     id="createModal"
+     tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <form asp-action="Create" method="post">
+
+                <!-- Header -->
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Create User
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <!-- Body -->
+                <div class="modal-body">
+
+
+                    <!-- Name -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Name
+                        </label>
+
+                        <input type="text"
+                               name="Name"
+                               class="form-control"
+                               placeholder="Enter name"
+                               required />
+
+                    </div>
+
+
+                    <!-- Username -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Username
+                        </label>
+
+                        <input type="text"
+                               name="Username"
+                               class="form-control"
+                               placeholder="Enter username"
+                               required />
+
+                    </div>
+
+
+                    <!-- Email -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input type="email"
+                               name="Email"
+                               class="form-control"
+                               placeholder="Enter email"
+                               required />
+
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Password
+                        </label>
+
+                        <input type="password"
+                               name="Password"
+                               class="form-control"
+                               placeholder="Enter password"
+                               required />
+
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Create
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- EDIT + DELETE MODALS -->
+<!-- ================================================= -->
+@foreach (var user in Model)
+{
+
+    <!-- ================================================= -->
+    <!-- EDIT MODAL -->
+    <!-- ================================================= -->
+
+    <div class="modal fade"
+         id="editModal-@user.Id"
+         tabindex="-1">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <form asp-action="Edit" method="post">
+
+
+                    <!-- User Id -->
+                    <input type="hidden"
+                           name="Id"
+                           value="@user.Id" />
+
+
+                    <!-- Header -->
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">
+                            Edit User
+                        </h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+
+                    <!-- Body -->
+                    <div class="modal-body">
+
+
+                        <!-- Name -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Name
+                            </label>
+
+                            <input type="text"
+                                   name="Name"
+                                   value="@user.Name"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+
+                        <!-- Username -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Username
+                            </label>
+
+                            <input type="text"
+                                   name="Username"
+                                   value="@user.Username"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+
+                        <!-- Email -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Email
+                            </label>
+
+                            <input type="email"
+                                   name="Email"
+                                   value="@user.Email"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+
+                        <!-- Password -->
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                New Password
+                            </label>
+
+                            <input type="password"
+                                   name="Password"
+                                   class="form-control"
+                                   placeholder="Leave empty to keep old password" />
+
+                            <small class="text-muted">
+                                Leave empty if you don't want to change the password.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Footer -->
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-warning">
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- DELETE MODAL -->
+    <!-- ================================================= -->
+
+    <div class="modal fade"
+         id="deleteModal-@user.Id"
+         tabindex="-1">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <form asp-action="Delete" method="post">
+
+                    <input type="hidden"
+                           name="id"
+                           value="@user.Id" />
+
+
+                    <!-- Header -->
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">
+                            Delete User
+                        </h5>
+
+                        <button type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+
+                    <!-- Body -->
+                    <div class="modal-body">
+
+                        <p>
+                            Are you sure you want to delete
+                            <strong>@user.Name</strong>?
+                        </p>
+
+                        <p class="text-danger mb-0">
+                            This action cannot be undone.
+                        </p>
+
+                    </div>
+
+
+                    <!-- Footer -->
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn btn-danger">
+                            Delete
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+}
