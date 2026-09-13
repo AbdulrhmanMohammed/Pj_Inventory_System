@@ -47,6 +47,22 @@ namespace Pj_Inventory_System.Data
 
                 });
 
+            modelBuilder.Entity<RoleUser>()
+      .HasOne(ru => ru.Role)
+      .WithMany()
+      .HasForeignKey(ru => ru.RoleId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RoleUser>()
+                .HasOne(ru => ru.User)
+                .WithMany()
+                .HasForeignKey(ru => ru.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.UnitPrice)
+                .HasPrecision(18, 2);
+
         }
 
 

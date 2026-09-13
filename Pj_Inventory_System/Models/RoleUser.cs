@@ -4,12 +4,14 @@ namespace Pj_Inventory_System.Models
 {
     public class RoleUser
     {
-        [ForeignKey("Role")]
+        [ForeignKey(nameof(Role))]
         public int RoleId { get; set; }
+
         public Role Role { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey(nameof(User))]
         public int UserId { get; set; }
+
         public User User { get; set; }
     }
 }
