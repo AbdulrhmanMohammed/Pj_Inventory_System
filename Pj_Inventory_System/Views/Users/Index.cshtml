@@ -1,5 +1,4 @@
-﻿@using Pj_Inventory_System.Models
-@model IEnumerable<User>
+﻿@model IEnumerable<User>
 
 @{
     ViewData["Title"] = "Users";
@@ -79,6 +78,13 @@
                             Roles
                         </a>
 
+
+                        <a asp-controller="Users"
+                           asp-action="ManageFiles"
+                           asp-route-userId="@user.Id"
+                           class="btn btn-warning">
+                            Files
+                        </a>
                     </td>
 
                 </tr>

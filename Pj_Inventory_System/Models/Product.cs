@@ -11,4 +11,6 @@
 
     public int QuantityInStock { get; set; }
     public decimal UnitPrice { get; set; }
+
+    public string? imageUrl { get; set; }
 }

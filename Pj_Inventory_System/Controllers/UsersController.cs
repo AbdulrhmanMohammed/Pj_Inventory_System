@@ -157,5 +157,74 @@ namespace Pj_Inventory_System.Controllers
             return RedirectToAction("Index");
         }
 
+        private string UploadFiles(IFormFile file, string name)
+        {
+            string fileName = name + "_" + Guid.NewGuid().ToString()
+                              + Path.GetExtension(file.FileName);
+
+
+            string folderPath = Path.Combine(
+      Directory.GetCurrentDirectory(),
+      "wwwroot",
+      "Files",
+      "Users"
+  );
+
+            Directory.CreateDirectory(folderPath);
+
+
+            string filePath = Path.Combine(
+          folderPath,
+          fileName);
+
+
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return "/Files/Users/" + fileName;
+        }
+
+
+
+
+        public IActionResult ManageFiles(int userId)
+        {
+            var user = _db.Users.FirstOrDefault(e => e.Id == userId);
+
+            if (user == null)
+                return NotFound();
+
+            var files = _db.UserFiles.Where(e => e.UserID == userId).ToList();
+            ViewBag.UserName = user.Username;
+
+            ViewBag.Files = files;
+
+            UserFile userFile = new UserFile();
+
+            userFile.UserID = userId;
+
+            return View(userFile);
+        }
+
+
+        [HttpPost]
+        public IActionResult ManageFiles(UserFile userFile, IFormFile fileUser)
+        {
+            if (userFile != null)
+            {
+                userFile.FileURL = UploadFiles(fileUser, userFile.Name);
+            }
+
+            _db.UserFiles.Add(userFile);
+            _db.SaveChanges();
+
+
+            return RedirectToAction(nameof(ManageFiles), new { userId = userFile.UserID });
+
+        }
+
     }
 }

@@ -1,0 +1,90 @@
+﻿@model UserFile
+@{
+    ViewData["Title"] = "User Files";
+    var files = ViewBag.Files as IEnumerable<UserFile>;
+}
+
+
+
+<h1>Create File User</h1>
+<div class="container">
+    <h4>
+        User: @ViewBag.UserName
+    </h4>
+    <form method="post" asp-action="ManageFiles" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="control-label">Name</label>
+            <input asp-for="Name" class="form-control" />
+
+            <input asp-for="UserID"  hidden />
+        </div>
+
+        <div class="form-group">
+            <label>Image</label>
+
+            <input type="file"
+                   name="fileUser"
+                   class="form-control" />
+        </div>
+
+
+
+        <div class="form-group">
+            <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <hr />
+
+<h3>List Files</h3>
+
+<table class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>File</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @{
+            int count = 1;
+        }
+
+        @foreach (var file in files)
+        {
+            <tr>
+
+                <td>
+                    @count
+                </td>
+
+                <td>
+                    @file.Name
+                </td>
+
+                <td>
+
+                    <a href="@file.FileURL"
+                       target="_blank"
+                       class="btn btn-info">
+
+                        View File
+
+                    </a>
+
+                </td>
+
+            </tr>
+
+            count++;
+        }
+
+    </tbody>
+
+</table>
+
+</div>

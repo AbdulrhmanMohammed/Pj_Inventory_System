@@ -88,5 +88,36 @@ namespace Pj_Inventory_System.Controllers
             _db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        private string UploadImage(IFormFile image)
+        {
+            string fileName = Guid.NewGuid().ToString()
+                              + Path.GetExtension(image.FileName);
+
+
+            string folderPath = Path.Combine(
+      Directory.GetCurrentDirectory(),
+      "wwwroot",
+      "images",
+      "product"
+  );
+
+            Directory.CreateDirectory(folderPath);
+
+
+            string filePath = Path.Combine(
+          folderPath,
+          fileName);
+
+
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                image.CopyTo(stream);
+            }
+
+            return "/images/product/" + fileName;
+        }
+
     }
 }

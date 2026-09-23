@@ -27,6 +27,8 @@ namespace Pj_Inventory_System.Data
 
         public DbSet<RoleUser> RoleUsers { get; set; }
 
+        public DbSet<UserFile> UserFiles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pj_Inventory_System.Data;
 
@@ -11,9 +12,11 @@ using Pj_Inventory_System.Data;
 namespace Pj_Inventory_System.Migrations
 {
     [DbContext(typeof(InventorySystemDbContext))]
-    partial class InventorySystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260923115821_userfile2")]
+    partial class userfile2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
