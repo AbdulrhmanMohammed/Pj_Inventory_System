@@ -5,7 +5,7 @@
 }
 
 <div class="text-end mb-3">
-    <a asp-action="Create" class="btn btn-primary">Create New Product</a>
+    <a asp-controller="Product" asp-action="Create" class="btn btn-primary">Create New Product</a>
 </div>
 
 <div class="container mt-2">
@@ -13,6 +13,7 @@
         <thead>
             <tr>
                 <th>ProductID</th>
+                <th>Image</th>
                 <th>ProductName</th>
                 <th>Category</th>
                 <th>Supplier</th>
@@ -26,19 +27,67 @@
             {
                 <tr>
                     <td>@product.ProductID</td>
+
+                    <!-- صورة صغيرة داخل الجدول -->
+                    <td>
+                        @if (!string.IsNullOrEmpty(product.imageUrl))
+                        {
+                            <img src="@product.imageUrl"
+                                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px;" />
+                        }
+                        else
+                        {
+                            <span>No Image</span>
+                        }
+                    </td>
+
                     <td>@product.ProductName</td>
                     <td>@product.Category.CategoryName</td>
                     <td>@product.Supplier?.SupplierName</td>
                     <td>@product.QuantityInStock</td>
                     <td>@product.UnitPrice</td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@product.ProductID" class="btn btn-primary">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@product.ProductID" class="btn btn-danger">Delete</a>
-                        <a asp-action="Image" asp-route-id="@product.imageUrl" class="btn btn-info">View Image</a>
 
+                    <td>
+                        <a asp-action="Edit" asp-route-uid="@product.UID" class="btn btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-uid="@product.UID" class="btn btn-danger">Delete</a>
+
+                        <!-- زر عرض الصورة -->
+                        <button class="btn btn-info"
+                                data-bs-toggle="modal"
+                                data-bs-target="#imgModal_@product.ProductID">
+                            View Image
+                        </button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<!-- الـ Modal لعرض الصورة -->
+@foreach (var product in Model)
+{
+    <div class="modal fade" id="imgModal_@product.ProductID" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">@product.ProductName - Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body text-center">
+                    @if (!string.IsNullOrEmpty(product.imageUrl))
+                    {
+                        <img src="@product.imageUrl" class="img-fluid rounded" style="max-height:400px;" />
+                    }
+                    else
+                    {
+                        <p>No Image Available</p>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+}

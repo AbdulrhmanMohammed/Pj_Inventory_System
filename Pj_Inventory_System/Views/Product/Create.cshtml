@@ -1,6 +1,8 @@
 ﻿@model Product
 
-<form method="post" asp-action="Create">
+<form method="post" asp-action="Create" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="UID" />
 
     <label>Product Name</label>
     <input asp-for="ProductName" class="form-control" />
@@ -23,4 +25,3 @@
     <button type="submit" class="btn btn-primary mt-3">Create</button>
 
 </form>
-

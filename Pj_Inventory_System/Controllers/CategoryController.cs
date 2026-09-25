@@ -31,6 +31,9 @@ namespace Pj_Inventory_System.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(category.UID))
+                    category.UID = Guid.NewGuid().ToString();
+
                 _db.Categories.Add(category);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -38,10 +41,13 @@ namespace Pj_Inventory_System.Controllers
             return View(category);
         }
 
+        // -----------------------------
+        // EDIT USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string uid)
         {
-            var category = _db.Categories.Find(id);
+            var category = _db.Categories.FirstOrDefault(x => x.UID == uid);
             if (category == null) return NotFound();
             return View(category);
         }
@@ -49,22 +55,33 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult Edit(Category category)
         {
-            _db.Categories.Update(category);
+            var existing = _db.Categories.FirstOrDefault(x => x.UID == category.UID);
+
+            if (existing == null)
+                return NotFound();
+
+            existing.CategoryName = category.CategoryName;
+
             _db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
+        // -----------------------------
+        // DELETE USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Delete()
+        public IActionResult Delete(string uid)
         {
-       
-            return View();
+            var category = _db.Categories.FirstOrDefault(x => x.UID == uid);
+            if (category == null) return NotFound();
+            return View(category);
         }
 
         [HttpPost]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteConfirmed(string uid)
         {
-            var category = _db.Categories.Find(id);
+            var category = _db.Categories.FirstOrDefault(x => x.UID == uid);
 
             if (category != null)
             {

@@ -5,7 +5,7 @@
 namespace Pj_Inventory_System.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateModels : Migration
+    public partial class Add1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

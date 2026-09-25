@@ -2,6 +2,9 @@
 
 <form method="post" asp-action="Delete">
 
+    <!-- مهم جداً: نرسل الـ UID -->
+    <input type="hidden" asp-for="UID" />
+
     <label>Product Name</label>
     <input asp-for="ProductName" class="form-control" readonly />
 

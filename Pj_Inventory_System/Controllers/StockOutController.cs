@@ -37,6 +37,9 @@ namespace Pj_Inventory_System.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(stockOut.UID))
+                    stockOut.UID = Guid.NewGuid().ToString();
+
                 _db.StockOut.Add(stockOut);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -46,10 +49,16 @@ namespace Pj_Inventory_System.Controllers
             return View(stockOut);
         }
 
+        // -----------------------------
+        // EDIT USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string uid)
         {
-            var stockOut = _db.StockOut.Find(id);
+            var stockOut = _db.StockOut
+                .Include(s => s.Product)
+                .FirstOrDefault(x => x.UID == uid);
+
             if (stockOut == null) return NotFound();
 
             ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
@@ -59,27 +68,45 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult Edit(StockOut stockOut)
         {
-            _db.StockOut.Update(stockOut);
+            var existing = _db.StockOut.FirstOrDefault(x => x.UID == stockOut.UID);
+
+            if (existing == null)
+                return NotFound();
+
+            existing.ProductID = stockOut.ProductID;
+            existing.Quantity = stockOut.Quantity;
+            existing.DateOut = stockOut.DateOut;
+
             _db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
+        // -----------------------------
+        // DELETE USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string uid)
         {
             var stockOut = _db.StockOut
                 .Include(s => s.Product)
-                .FirstOrDefault(s => s.StockOutID == id);
+                .FirstOrDefault(s => s.UID == uid);
 
             if (stockOut == null) return NotFound();
             return View(stockOut);
         }
 
         [HttpPost]
-        public IActionResult Delete(StockOut stockOut)
+        public IActionResult DeleteConfirmed(string uid)
         {
-            _db.StockOut.Remove(stockOut);
-            _db.SaveChanges();
+            var stockOut = _db.StockOut.FirstOrDefault(x => x.UID == uid);
+
+            if (stockOut != null)
+            {
+                _db.StockOut.Remove(stockOut);
+                _db.SaveChanges();
+            }
+
             return RedirectToAction("Index");
         }
     }

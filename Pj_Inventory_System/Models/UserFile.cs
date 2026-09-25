@@ -6,6 +6,7 @@ namespace Pj_Inventory_System.Models
     {
         public int Id { get; set; }
 
+        public string UID { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; }
 
         public string FileURL { get; set; } = "";

@@ -1,9 +1,14 @@
 ﻿@model Supplier
 
 <form method="post" asp-action="Delete">
+
+    <!-- مهم جداً: نرسل الـ UID -->
+    <input type="hidden" asp-for="UID" />
+
     <label>Supplier Name</label>
     <input asp-for="SupplierName" class="form-control" readonly />
 
     <button type="submit" class="btn btn-danger mt-3">Delete</button>
     <a asp-action="Index" class="btn btn-secondary mt-3">Cancel</a>
+
 </form>

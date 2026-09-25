@@ -31,6 +31,9 @@ namespace Pj_Inventory_System.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(supplier.UID))
+                    supplier.UID = Guid.NewGuid().ToString();
+
                 _db.Supplier.Add(supplier);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -38,10 +41,13 @@ namespace Pj_Inventory_System.Controllers
             return View(supplier);
         }
 
+        // -----------------------------
+        // EDIT USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string uid)
         {
-            var supplier = _db.Supplier.Find(id);
+            var supplier = _db.Supplier.FirstOrDefault(x => x.UID == uid);
             if (supplier == null) return NotFound();
             return View(supplier);
         }
@@ -49,24 +55,40 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult Edit(Supplier supplier)
         {
-            _db.Supplier.Update(supplier);
+            var existing = _db.Supplier.FirstOrDefault(x => x.UID == supplier.UID);
+
+            if (existing == null)
+                return NotFound();
+
+            existing.SupplierName = supplier.SupplierName;
+
             _db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
+        // -----------------------------
+        // DELETE USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string uid)
         {
-            var supplier = _db.Supplier.Find(id);
+            var supplier = _db.Supplier.FirstOrDefault(x => x.UID == uid);
             if (supplier == null) return NotFound();
             return View(supplier);
         }
 
         [HttpPost]
-        public IActionResult Delete(Supplier supplier)
+        public IActionResult DeleteConfirmed(string uid)
         {
-            _db.Supplier.Remove(supplier);
-            _db.SaveChanges();
+            var supplier = _db.Supplier.FirstOrDefault(x => x.UID == uid);
+
+            if (supplier != null)
+            {
+                _db.Supplier.Remove(supplier);
+                _db.SaveChanges();
+            }
+
             return RedirectToAction("Index");
         }
     }

@@ -1,10 +1,13 @@
 ﻿@model Supplier
 
 <form method="post" asp-action="Edit">
-    <input type="hidden" asp-for="SupplierID" />
+
+    <!-- مهم جداً: نرسل الـ UID -->
+    <input type="hidden" asp-for="UID" />
 
     <label>Supplier Name</label>
     <input asp-for="SupplierName" class="form-control" />
 
     <button type="submit" class="btn btn-primary mt-3">Save</button>
+
 </form>

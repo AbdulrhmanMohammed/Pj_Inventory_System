@@ -12,13 +12,14 @@
     <table class="table table-primary table-hover">
         <thead>
             <tr>
-                <th>StockOutID</th>
+                <th>ID</th>
                 <th>Product</th>
                 <th>Quantity</th>
                 <th>Date Out</th>
                 <th>Actions</th>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var item in Model)
             {
@@ -27,9 +28,19 @@
                     <td>@item.Product?.ProductName</td>
                     <td>@item.Quantity</td>
                     <td>@item.DateOut.ToShortDateString()</td>
+
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.StockOutID" class="btn btn-primary">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.StockOutID" class="btn btn-danger">Delete</a>
+                        <a asp-action="Edit"
+                           asp-route-uid="@item.UID"
+                           class="btn btn-primary">
+                            Edit
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-uid="@item.UID"
+                           class="btn btn-danger">
+                            Delete
+                        </a>
                     </td>
                 </tr>
             }

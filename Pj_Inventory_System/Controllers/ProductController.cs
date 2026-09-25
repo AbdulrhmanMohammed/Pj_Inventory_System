@@ -15,6 +15,12 @@ namespace Pj_Inventory_System.Controllers
             _db = db;
         }
 
+        private void LoadDropDowns()
+        {
+            ViewBag.Categories = new SelectList(_db.Categories.ToList(), "CategoryID", "CategoryName");
+            ViewBag.Suppliers = new SelectList(_db.Supplier.ToList(), "SupplierID", "SupplierName");
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -29,24 +35,52 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Categories = new SelectList(_db.Categories.ToList(), "CategoryID", "CategoryName");
-            ViewBag.Suppliers = new SelectList(_db.Supplier.ToList(), "SupplierID", "SupplierName");
+            LoadDropDowns();
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(Product product, IFormFile image)
         {
-            if (ModelState.IsValid)
+            LoadDropDowns();
+
+            // توليد UID قبل التحقق
+            if (string.IsNullOrEmpty(product.UID))
+                product.UID = Guid.NewGuid().ToString();
+
+            // طباعة أخطاء ModelState
+            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
             {
-                _db.Products.Add(product);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
+                Console.WriteLine("MODEL ERROR: " + error.ErrorMessage);
             }
 
-            ViewBag.Categories = new SelectList(_db.Categories.ToList(), "CategoryID", "CategoryName");
-            ViewBag.Suppliers = new SelectList(_db.Supplier.ToList(), "SupplierID", "SupplierName");
-            return View(product);
+            // التحقق اليدوي
+            if (string.IsNullOrWhiteSpace(product.ProductName))
+                ModelState.AddModelError("ProductName", "Product Name is required.");
+
+            if (product.CategoryID <= 0)
+                ModelState.AddModelError("CategoryID", "Category is required.");
+
+            if (product.SupplierID <= 0)
+                ModelState.AddModelError("SupplierID", "Supplier is required.");
+
+            if (product.QuantityInStock <= 0)
+                ModelState.AddModelError("QuantityInStock", "Quantity must be greater than 0.");
+
+            if (product.UnitPrice <= 0)
+                ModelState.AddModelError("UnitPrice", "Unit Price must be greater than 0.");
+
+            if (!ModelState.IsValid)
+                return View(product);
+
+            // رفع الصورة
+            if (image != null && image.Length > 0)
+                product.imageUrl = UploadImage(image);
+
+            _db.Products.Add(product);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
@@ -55,17 +89,30 @@ namespace Pj_Inventory_System.Controllers
             var product = _db.Products.Find(id);
             if (product == null) return NotFound();
 
-            ViewBag.Categories = new SelectList(_db.Categories.ToList(), "CategoryID", "CategoryName");
-            ViewBag.Suppliers = new SelectList(_db.Supplier.ToList(), "SupplierID", "SupplierName");
-
+            LoadDropDowns();
             return View(product);
         }
 
         [HttpPost]
-        public IActionResult Edit(Product product)
+        public IActionResult Edit(Product product, IFormFile image)
         {
-            _db.Products.Update(product);
+            LoadDropDowns();
+
+            var existing = _db.Products.FirstOrDefault(x => x.ProductID == product.ProductID);
+            if (existing == null)
+                return NotFound();
+
+            existing.ProductName = product.ProductName;
+            existing.UnitPrice = product.UnitPrice;
+            existing.CategoryID = product.CategoryID;
+            existing.SupplierID = product.SupplierID;
+            existing.QuantityInStock = product.QuantityInStock;
+
+            if (image != null && image.Length > 0)
+                existing.imageUrl = UploadImage(image);
+
             _db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
@@ -91,25 +138,18 @@ namespace Pj_Inventory_System.Controllers
 
         private string UploadImage(IFormFile image)
         {
-            string fileName = Guid.NewGuid().ToString()
-                              + Path.GetExtension(image.FileName);
-
+            string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
 
             string folderPath = Path.Combine(
-      Directory.GetCurrentDirectory(),
-      "wwwroot",
-      "images",
-      "product"
-  );
+                Directory.GetCurrentDirectory(),
+                "wwwroot",
+                "images",
+                "product"
+            );
 
             Directory.CreateDirectory(folderPath);
 
-
-            string filePath = Path.Combine(
-          folderPath,
-          fileName);
-
-
+            string filePath = Path.Combine(folderPath, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
@@ -118,6 +158,5 @@ namespace Pj_Inventory_System.Controllers
 
             return "/images/product/" + fileName;
         }
-
     }
 }

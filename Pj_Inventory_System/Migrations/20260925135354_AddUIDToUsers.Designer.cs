@@ -12,8 +12,8 @@ using Pj_Inventory_System.Data;
 namespace Pj_Inventory_System.Migrations
 {
     [DbContext(typeof(InventorySystemDbContext))]
-    [Migration("20260913140343_InitialCreate2")]
-    partial class InitialCreate2
+    [Migration("20260925135354_AddUIDToUsers")]
+    partial class AddUIDToUsers
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,10 @@ namespace Pj_Inventory_System.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"));
 
                     b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -66,6 +70,10 @@ namespace Pj_Inventory_System.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -103,6 +111,10 @@ namespace Pj_Inventory_System.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -146,12 +158,46 @@ namespace Pj_Inventory_System.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Models.UserFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("UserFiles");
                 });
 
             modelBuilder.Entity("Product", b =>
@@ -175,9 +221,16 @@ namespace Pj_Inventory_System.Migrations
                     b.Property<int>("SupplierID")
                         .HasColumnType("int");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("UnitPrice")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("imageUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProductID");
 
@@ -220,6 +273,10 @@ namespace Pj_Inventory_System.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("StockInID");
 
                     b.HasIndex("ProductID");
@@ -244,6 +301,10 @@ namespace Pj_Inventory_System.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("StockOutID");
 
                     b.HasIndex("ProductID");
@@ -260,6 +321,10 @@ namespace Pj_Inventory_System.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SupplierID"));
 
                     b.Property<string>("SupplierName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UID")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -317,6 +382,17 @@ namespace Pj_Inventory_System.Migrations
                     b.Navigation("Role");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Models.UserFile", b =>
+                {
+                    b.HasOne("Pj_Inventory_System.Models.User", "Users")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Product", b =>

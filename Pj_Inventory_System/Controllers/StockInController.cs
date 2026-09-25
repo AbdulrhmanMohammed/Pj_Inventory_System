@@ -37,6 +37,9 @@ namespace Pj_Inventory_System.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(stockIn.UID))
+                    stockIn.UID = Guid.NewGuid().ToString();
+
                 _db.StockIn.Add(stockIn);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -46,10 +49,16 @@ namespace Pj_Inventory_System.Controllers
             return View(stockIn);
         }
 
+        // -----------------------------
+        // EDIT USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string uid)
         {
-            var stockIn = _db.StockIn.Find(id);
+            var stockIn = _db.StockIn
+                .Include(s => s.Product)
+                .FirstOrDefault(x => x.UID == uid);
+
             if (stockIn == null) return NotFound();
 
             ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
@@ -59,27 +68,45 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult Edit(StockIn stockIn)
         {
-            _db.StockIn.Update(stockIn);
+            var existing = _db.StockIn.FirstOrDefault(x => x.UID == stockIn.UID);
+
+            if (existing == null)
+                return NotFound();
+
+            existing.ProductID = stockIn.ProductID;
+            existing.Quantity = stockIn.Quantity;
+            existing.DateIn = stockIn.DateIn;
+
             _db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
+        // -----------------------------
+        // DELETE USING UID
+        // -----------------------------
         [HttpGet]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string uid)
         {
             var stockIn = _db.StockIn
                 .Include(s => s.Product)
-                .FirstOrDefault(s => s.StockInID == id);
+                .FirstOrDefault(s => s.UID == uid);
 
             if (stockIn == null) return NotFound();
             return View(stockIn);
         }
 
         [HttpPost]
-        public IActionResult Delete(StockIn stockIn)
+        public IActionResult DeleteConfirmed(string uid)
         {
-            _db.StockIn.Remove(stockIn);
-            _db.SaveChanges();
+            var stockIn = _db.StockIn.FirstOrDefault(x => x.UID == uid);
+
+            if (stockIn != null)
+            {
+                _db.StockIn.Remove(stockIn);
+                _db.SaveChanges();
+            }
+
             return RedirectToAction("Index");
         }
     }

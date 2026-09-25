@@ -12,12 +12,13 @@
     <table class="table table-primary table-hover">
         <thead>
             <tr>
-                <th>SupplierID</th>
+                <th>ID</th>
                 <th>SupplierName</th>
                 <th>Products Count</th>
                 <th>Actions</th>
             </tr>
         </thead>
+
         <tbody>
             @foreach (var supplier in Model)
             {
@@ -25,9 +26,19 @@
                     <td>@supplier.SupplierID</td>
                     <td>@supplier.SupplierName</td>
                     <td>@supplier.Products?.Count</td>
+
                     <td>
-                        <a asp-action="Edit" asp-route-id="@supplier.SupplierID" class="btn btn-primary">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@supplier.SupplierID" class="btn btn-danger">Delete</a>
+                        <a asp-action="Edit"
+                           asp-route-uid="@supplier.UID"
+                           class="btn btn-primary">
+                            Edit
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-uid="@supplier.UID"
+                           class="btn btn-danger">
+                            Delete
+                        </a>
                     </td>
                 </tr>
             }
