@@ -21,6 +21,9 @@ namespace Pj_Inventory_System.Controllers
             ViewBag.Suppliers = new SelectList(_db.Supplier.ToList(), "SupplierID", "SupplierName");
         }
 
+        // ============================
+        // INDEX
+        // ============================
         [HttpGet]
         public IActionResult Index()
         {
@@ -32,6 +35,9 @@ namespace Pj_Inventory_System.Controllers
             return View(products);
         }
 
+        // ============================
+        // CREATE GET
+        // ============================
         [HttpGet]
         public IActionResult Create()
         {
@@ -39,22 +45,17 @@ namespace Pj_Inventory_System.Controllers
             return View();
         }
 
+        // ============================
+        // CREATE POST
+        // ============================
         [HttpPost]
         public IActionResult Create(Product product, IFormFile image)
         {
             LoadDropDowns();
 
-            // توليد UID قبل التحقق
             if (string.IsNullOrEmpty(product.UID))
                 product.UID = Guid.NewGuid().ToString();
 
-            // طباعة أخطاء ModelState
-            foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-            {
-                Console.WriteLine("MODEL ERROR: " + error.ErrorMessage);
-            }
-
-            // التحقق اليدوي
             if (string.IsNullOrWhiteSpace(product.ProductName))
                 ModelState.AddModelError("ProductName", "Product Name is required.");
 
@@ -73,7 +74,6 @@ namespace Pj_Inventory_System.Controllers
             if (!ModelState.IsValid)
                 return View(product);
 
-            // رفع الصورة
             if (image != null && image.Length > 0)
                 product.imageUrl = UploadImage(image);
 
@@ -83,24 +83,33 @@ namespace Pj_Inventory_System.Controllers
             return RedirectToAction("Index");
         }
 
+        // ============================
+        // EDIT GET (بالـ UID)
+        // ============================
         [HttpGet]
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string uid)
         {
-            var product = _db.Products.Find(id);
+            var product = _db.Products
+                .Include(p => p.Category)
+                .Include(p => p.Supplier)
+                .FirstOrDefault(p => p.UID == uid);
+
             if (product == null) return NotFound();
 
             LoadDropDowns();
             return View(product);
         }
 
+        // ============================
+        // EDIT POST
+        // ============================
         [HttpPost]
         public IActionResult Edit(Product product, IFormFile image)
         {
             LoadDropDowns();
 
-            var existing = _db.Products.FirstOrDefault(x => x.ProductID == product.ProductID);
-            if (existing == null)
-                return NotFound();
+            var existing = _db.Products.FirstOrDefault(x => x.UID == product.UID);
+            if (existing == null) return NotFound();
 
             existing.ProductName = product.ProductName;
             existing.UnitPrice = product.UnitPrice;
@@ -116,26 +125,40 @@ namespace Pj_Inventory_System.Controllers
             return RedirectToAction("Index");
         }
 
+        // ============================
+        // DELETE GET (بالـ UID)
+        // ============================
         [HttpGet]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(string uid)
         {
             var product = _db.Products
                 .Include(p => p.Category)
                 .Include(p => p.Supplier)
-                .FirstOrDefault(p => p.ProductID == id);
+                .FirstOrDefault(p => p.UID == uid);
 
             if (product == null) return NotFound();
+
             return View(product);
         }
 
+        // ============================
+        // DELETE POST
+        // ============================
         [HttpPost]
         public IActionResult Delete(Product product)
         {
-            _db.Products.Remove(product);
+            var existing = _db.Products.FirstOrDefault(x => x.UID == product.UID);
+            if (existing == null) return NotFound();
+
+            _db.Products.Remove(existing);
             _db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
+        // ============================
+        // رفع الصورة
+        // ============================
         private string UploadImage(IFormFile image)
         {
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
