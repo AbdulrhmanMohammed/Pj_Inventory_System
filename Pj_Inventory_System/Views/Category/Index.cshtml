@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Category>
+﻿@model IEnumerable<Pj_Inventory_System.Dtos.CategoryDtos.CategoryDto>
+
 @{
     ViewData["Title"] = "Category Page";
 }
@@ -24,7 +25,9 @@
                 <tr>
                     <td>@category.CategoryID</td>
                     <td>@category.CategoryName</td>
-                    <td>@category.Products?.Count</td>
+
+                    <!-- بما أن الـ DTO ما فيه Products، نخليها صفر أو نضيفها لاحقاً -->
+                    <td>0</td>
 
                     <td>
 

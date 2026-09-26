@@ -1,12 +1,12 @@
-﻿@model StockOut
+﻿@model Pj_Inventory_System.Dtos.StockOutDtos.StockOutDto
 
-<form method="post" asp-action="Delete">
+<form method="post" asp-action="DeleteConfirmed">
 
     <!-- مهم جداً: نرسل الـ UID -->
     <input type="hidden" asp-for="UID" />
 
     <label>Product</label>
-    <input value="@Model.Product.ProductName" class="form-control" readonly />
+    <input value="@Model.ProductName" class="form-control" readonly />
 
     <label>Quantity</label>
     <input asp-for="Quantity" class="form-control" readonly />

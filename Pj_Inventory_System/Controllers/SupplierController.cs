@@ -1,92 +1,138 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pj_Inventory_System.Data;
+using Pj_Inventory_System.Dtos.SupplierDtos;
 using Pj_Inventory_System.Models;
+using Pj_Inventory_System.Repositories;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class SupplierController : Controller
     {
-        private readonly InventorySystemDbContext _db;
+        private readonly ISupplierRepository _supplierRepo;
 
-        public SupplierController(InventorySystemDbContext db)
+        public SupplierController(ISupplierRepository supplierRepo)
         {
-            _db = db;
+            _supplierRepo = supplierRepo;
         }
 
+        // ============================
+        // INDEX
+        // ============================
         [HttpGet]
         public IActionResult Index()
         {
-            var suppliers = _db.Supplier.ToList();
+            var suppliers = _supplierRepo.GetAll()
+                .Select(s => new SupplierDto
+                {
+                    SupplierID = s.SupplierID,
+                    UID = s.UID,
+                    SupplierName = s.SupplierName,
+                    ProductsCount = s.Products != null ? s.Products.Count : 0
+                })
+                .ToList();
+
             return View(suppliers);
         }
 
+        // ============================
+        // CREATE GET
+        // ============================
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        // ============================
+        // CREATE POST
+        // ============================
         [HttpPost]
-        public IActionResult Create(Supplier supplier)
+        public IActionResult Create(CreateSupplierDto dto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            var supplier = new Supplier
             {
-                if (string.IsNullOrEmpty(supplier.UID))
-                    supplier.UID = Guid.NewGuid().ToString();
+                UID = Guid.NewGuid().ToString(),
+                SupplierName = dto.SupplierName
+            };
 
-                _db.Supplier.Add(supplier);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(supplier);
-        }
-
-        // -----------------------------
-        // EDIT USING UID
-        // -----------------------------
-        [HttpGet]
-        public IActionResult Edit(string uid)
-        {
-            var supplier = _db.Supplier.FirstOrDefault(x => x.UID == uid);
-            if (supplier == null) return NotFound();
-            return View(supplier);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Supplier supplier)
-        {
-            var existing = _db.Supplier.FirstOrDefault(x => x.UID == supplier.UID);
-
-            if (existing == null)
-                return NotFound();
-
-            existing.SupplierName = supplier.SupplierName;
-
-            _db.SaveChanges();
+            _supplierRepo.Add(supplier);
+            _supplierRepo.Save();
 
             return RedirectToAction("Index");
         }
 
-        // -----------------------------
-        // DELETE USING UID
-        // -----------------------------
+        // ============================
+        // EDIT GET (بالـ UID)
+        // ============================
+        [HttpGet]
+        public IActionResult Edit(string uid)
+        {
+            var supplier = _supplierRepo.GetByUid(uid);
+            if (supplier == null) return NotFound();
+
+            var dto = new UpdateSupplierDto
+            {
+                SupplierID = supplier.SupplierID,
+                UID = supplier.UID,
+                SupplierName = supplier.SupplierName
+            };
+
+            return View(dto);
+        }
+
+        // ============================
+        // EDIT POST
+        // ============================
+        [HttpPost]
+        public IActionResult Edit(UpdateSupplierDto dto)
+        {
+            var existing = _supplierRepo.GetByUid(dto.UID);
+
+            if (existing == null)
+                return NotFound();
+
+            existing.SupplierName = dto.SupplierName;
+
+            _supplierRepo.Update(existing);
+            _supplierRepo.Save();
+
+            return RedirectToAction("Index");
+        }
+
+        // ============================
+        // DELETE GET (بالـ UID)
+        // ============================
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var supplier = _db.Supplier.FirstOrDefault(x => x.UID == uid);
+            var supplier = _supplierRepo.GetByUid(uid);
             if (supplier == null) return NotFound();
-            return View(supplier);
+
+            var dto = new SupplierDto
+            {
+                SupplierID = supplier.SupplierID,
+                UID = supplier.UID,
+                SupplierName = supplier.SupplierName,
+                ProductsCount = supplier.Products != null ? supplier.Products.Count : 0
+            };
+
+            return View(dto);
         }
 
+        // ============================
+        // DELETE POST
+        // ============================
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var supplier = _db.Supplier.FirstOrDefault(x => x.UID == uid);
+            var supplier = _supplierRepo.GetByUid(uid);
 
             if (supplier != null)
             {
-                _db.Supplier.Remove(supplier);
-                _db.SaveChanges();
+                _supplierRepo.Delete(supplier);
+                _supplierRepo.Save();
             }
 
             return RedirectToAction("Index");

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<StockIn>
+﻿@model IEnumerable<Pj_Inventory_System.Dtos.StockInDtos.StockInDto>
 
 @{
     ViewData["Title"] = "Stock In Page";
@@ -25,7 +25,7 @@
             {
                 <tr>
                     <td>@item.StockInID</td>
-                    <td>@item.Product?.ProductName</td>
+                    <td>@item.ProductName</td>
                     <td>@item.Quantity</td>
                     <td>@item.DateIn.ToShortDateString()</td>
 

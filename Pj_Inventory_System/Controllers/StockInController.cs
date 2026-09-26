@@ -1,111 +1,163 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Pj_Inventory_System.Data;
+using Pj_Inventory_System.Dtos.StockInDtos;
 using Pj_Inventory_System.Models;
+using Pj_Inventory_System.Repositories;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class StockInController : Controller
     {
-        private readonly InventorySystemDbContext _db;
+        private readonly IStockInRepository _stockInRepo;
+        private readonly IProductRepository _productRepo;
 
-        public StockInController(InventorySystemDbContext db)
+        public StockInController(
+            IStockInRepository stockInRepo,
+            IProductRepository productRepo)
         {
-            _db = db;
+            _stockInRepo = stockInRepo;
+            _productRepo = productRepo;
         }
 
+        // ============================
+        // LOAD DROPDOWNS
+        // ============================
+        private void LoadDropDowns()
+        {
+            ViewBag.Products = new SelectList(
+                _productRepo.GetAll(), "ProductID", "ProductName");
+        }
+
+        // ============================
+        // INDEX
+        // ============================
         [HttpGet]
         public IActionResult Index()
         {
-            var stockIn = _db.StockIn
-                .Include(s => s.Product)
+            var stockIn = _stockInRepo.GetAll()
+                .Select(s => new StockInDto
+                {
+                    StockInID = s.StockInID,
+                    UID = s.UID,
+                    ProductID = s.ProductID,
+                    Quantity = s.Quantity,
+                    DateIn = s.DateIn,
+                    ProductName = s.Product?.ProductName
+                })
                 .ToList();
 
             return View(stockIn);
         }
 
+        // ============================
+        // CREATE GET
+        // ============================
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
+            LoadDropDowns();
             return View();
         }
 
+        // ============================
+        // CREATE POST
+        // ============================
         [HttpPost]
-        public IActionResult Create(StockIn stockIn)
+        public IActionResult Create(CreateStockInDto dto)
         {
-            if (ModelState.IsValid)
+            LoadDropDowns();
+
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            var stockIn = new StockIn
             {
-                if (string.IsNullOrEmpty(stockIn.UID))
-                    stockIn.UID = Guid.NewGuid().ToString();
+                UID = Guid.NewGuid().ToString(),
+                ProductID = dto.ProductID,
+                Quantity = dto.Quantity,
+                DateIn = dto.DateIn
+            };
 
-                _db.StockIn.Add(stockIn);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
-            return View(stockIn);
-        }
-
-        // -----------------------------
-        // EDIT USING UID
-        // -----------------------------
-        [HttpGet]
-        public IActionResult Edit(string uid)
-        {
-            var stockIn = _db.StockIn
-                .Include(s => s.Product)
-                .FirstOrDefault(x => x.UID == uid);
-
-            if (stockIn == null) return NotFound();
-
-            ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
-            return View(stockIn);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(StockIn stockIn)
-        {
-            var existing = _db.StockIn.FirstOrDefault(x => x.UID == stockIn.UID);
-
-            if (existing == null)
-                return NotFound();
-
-            existing.ProductID = stockIn.ProductID;
-            existing.Quantity = stockIn.Quantity;
-            existing.DateIn = stockIn.DateIn;
-
-            _db.SaveChanges();
+            _stockInRepo.Add(stockIn);
+            _stockInRepo.Save();
 
             return RedirectToAction("Index");
         }
 
-        // -----------------------------
-        // DELETE USING UID
-        // -----------------------------
+        // ============================
+        // EDIT GET (بالـ UID)
+        // ============================
+        [HttpGet]
+        public IActionResult Edit(string uid)
+        {
+            var stockIn = _stockInRepo.GetByUid(uid);
+            if (stockIn == null) return NotFound();
+
+            var dto = new UpdateStockInDto
+            {
+                StockInID = stockIn.StockInID,
+                UID = stockIn.UID,
+                ProductID = stockIn.ProductID,
+                Quantity = stockIn.Quantity,
+                DateIn = stockIn.DateIn
+            };
+
+            LoadDropDowns();
+            return View(dto);
+        }
+
+        // ============================
+        // EDIT POST
+        // ============================
+        [HttpPost]
+        public IActionResult Edit(UpdateStockInDto dto)
+        {
+            var existing = _stockInRepo.GetByUid(dto.UID);
+            if (existing == null) return NotFound();
+
+            existing.ProductID = dto.ProductID;
+            existing.Quantity = dto.Quantity;
+            existing.DateIn = dto.DateIn;
+
+            _stockInRepo.Update(existing);
+            _stockInRepo.Save();
+
+            return RedirectToAction("Index");
+        }
+
+        // ============================
+        // DELETE GET (بالـ UID)
+        // ============================
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var stockIn = _db.StockIn
-                .Include(s => s.Product)
-                .FirstOrDefault(s => s.UID == uid);
-
+            var stockIn = _stockInRepo.GetByUid(uid);
             if (stockIn == null) return NotFound();
-            return View(stockIn);
+
+            var dto = new StockInDto
+            {
+                StockInID = stockIn.StockInID,
+                UID = stockIn.UID,
+                ProductID = stockIn.ProductID,
+                Quantity = stockIn.Quantity,
+                DateIn = stockIn.DateIn,
+                ProductName = stockIn.Product?.ProductName
+            };
+
+            return View(dto);
         }
 
+        // ============================
+        // DELETE POST
+        // ============================
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var stockIn = _db.StockIn.FirstOrDefault(x => x.UID == uid);
+            var stockIn = _stockInRepo.GetByUid(uid);
+            if (stockIn == null) return NotFound();
 
-            if (stockIn != null)
-            {
-                _db.StockIn.Remove(stockIn);
-                _db.SaveChanges();
-            }
+            _stockInRepo.Delete(stockIn);
+            _stockInRepo.Save();
 
             return RedirectToAction("Index");
         }

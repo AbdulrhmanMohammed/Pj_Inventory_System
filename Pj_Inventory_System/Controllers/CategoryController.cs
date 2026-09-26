@@ -1,25 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pj_Inventory_System.Data;
+using Pj_Inventory_System.Dtos.CategoryDtos;
 using Pj_Inventory_System.Models;
+using Pj_Inventory_System.Repositories;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly InventorySystemDbContext _db;
+        private readonly ICategoryRepository _repo;
 
-        public CategoryController(InventorySystemDbContext db)
+        public CategoryController(ICategoryRepository repo)
         {
-            _db = db;
+            _repo = repo;
         }
 
+        // ============================
+        // INDEX
+        // ============================
         [HttpGet]
         public IActionResult Index()
         {
-            IEnumerable<Category> categories = _db.Categories.ToList();
+            var categories = _repo.GetAll()
+                .Select(c => new CategoryDto
+                {
+                    CategoryID = c.CategoryID,
+                    CategoryName = c.CategoryName,
+                    UID = c.UID
+                }).ToList();
+
             return View(categories);
         }
 
+        // ============================
+        // CREATE
+        // ============================
         [HttpGet]
         public IActionResult Create()
         {
@@ -27,66 +41,85 @@ namespace Pj_Inventory_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Category category)
+        public IActionResult Create(CreateCategoryDto dto)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            var category = new Category
             {
-                if (string.IsNullOrEmpty(category.UID))
-                    category.UID = Guid.NewGuid().ToString();
+                CategoryName = dto.CategoryName,
+                UID = Guid.NewGuid().ToString()
+            };
 
-                _db.Categories.Add(category);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(category);
-        }
-
-        // -----------------------------
-        // EDIT USING UID
-        // -----------------------------
-        [HttpGet]
-        public IActionResult Edit(string uid)
-        {
-            var category = _db.Categories.FirstOrDefault(x => x.UID == uid);
-            if (category == null) return NotFound();
-            return View(category);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(Category category)
-        {
-            var existing = _db.Categories.FirstOrDefault(x => x.UID == category.UID);
-
-            if (existing == null)
-                return NotFound();
-
-            existing.CategoryName = category.CategoryName;
-
-            _db.SaveChanges();
+            _repo.Add(category);
+            _repo.Save();
 
             return RedirectToAction("Index");
         }
 
-        // -----------------------------
+        // ============================
+        // EDIT USING UID
+        // ============================
+        [HttpGet]
+        public IActionResult Edit(string uid)
+        {
+            var category = _repo.GetByUid(uid);
+            if (category == null) return NotFound();
+
+            var dto = new UpdateCategoryDto
+            {
+                CategoryID = category.CategoryID,
+                CategoryName = category.CategoryName
+            };
+
+            return View(dto);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(UpdateCategoryDto dto)
+        {
+            var existing = _repo.GetById(dto.CategoryID);
+
+            if (existing == null)
+                return NotFound();
+
+            existing.CategoryName = dto.CategoryName;
+
+            _repo.Update(existing);
+            _repo.Save();
+
+            return RedirectToAction("Index");
+        }
+
+        // ============================
         // DELETE USING UID
-        // -----------------------------
+        // ============================
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var category = _db.Categories.FirstOrDefault(x => x.UID == uid);
+            var category = _repo.GetByUid(uid);
             if (category == null) return NotFound();
-            return View(category);
+
+            var dto = new CategoryDto
+            {
+                CategoryID = category.CategoryID,
+                CategoryName = category.CategoryName,
+                UID = category.UID
+            };
+
+            return View(dto);
         }
 
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var category = _db.Categories.FirstOrDefault(x => x.UID == uid);
+            var category = _repo.GetByUid(uid);
 
             if (category != null)
             {
-                _db.Categories.Remove(category);
-                _db.SaveChanges();
+                _repo.Delete(category);
+                _repo.Save();
             }
 
             return RedirectToAction("Index");

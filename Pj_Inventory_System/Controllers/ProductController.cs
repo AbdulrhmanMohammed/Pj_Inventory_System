@@ -1,24 +1,34 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Pj_Inventory_System.Data;
+using Pj_Inventory_System.Dtos.ProductDtos;
 using Pj_Inventory_System.Models;
+using Pj_Inventory_System.Repositories;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly InventorySystemDbContext _db;
+        private readonly IProductRepository _productRepo;
+        private readonly ICategoryRepository _categoryRepo;
+        private readonly ISupplierRepository _supplierRepo;
 
-        public ProductController(InventorySystemDbContext db)
+        public ProductController(
+            IProductRepository productRepo,
+            ICategoryRepository categoryRepo,
+            ISupplierRepository supplierRepo)
         {
-            _db = db;
+            _productRepo = productRepo;
+            _categoryRepo = categoryRepo;
+            _supplierRepo = supplierRepo;
         }
 
         private void LoadDropDowns()
         {
-            ViewBag.Categories = new SelectList(_db.Categories.ToList(), "CategoryID", "CategoryName");
-            ViewBag.Suppliers = new SelectList(_db.Supplier.ToList(), "SupplierID", "SupplierName");
+            ViewBag.Categories = new SelectList(
+                _categoryRepo.GetAll(), "CategoryID", "CategoryName");
+
+            ViewBag.Suppliers = new SelectList(
+                _supplierRepo.GetAll(), "SupplierID", "SupplierName");
         }
 
         // ============================
@@ -27,10 +37,21 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var products = _db.Products
-                .Include(p => p.Category)
-                .Include(p => p.Supplier)
-                .ToList();
+            var products = _productRepo.GetAll()
+                .Select(p => new ProductDto
+                {
+                    ProductID = p.ProductID,
+                    UID = p.UID,
+                    ProductName = p.ProductName,
+                    CategoryID = p.CategoryID,
+                    SupplierID = p.SupplierID,
+                    QuantityInStock = p.QuantityInStock,
+                    UnitPrice = p.UnitPrice,
+                    imageUrl = p.imageUrl,
+
+                    CategoryName = p.Category?.CategoryName ?? "",
+                    SupplierName = p.Supplier?.SupplierName ?? ""
+                }).ToList();
 
             return View(products);
         }
@@ -49,36 +70,29 @@ namespace Pj_Inventory_System.Controllers
         // CREATE POST
         // ============================
         [HttpPost]
-        public IActionResult Create(Product product, IFormFile image)
+        public IActionResult Create(CreateProductDto dto, IFormFile image)
         {
             LoadDropDowns();
 
-            if (string.IsNullOrEmpty(product.UID))
-                product.UID = Guid.NewGuid().ToString();
-
-            if (string.IsNullOrWhiteSpace(product.ProductName))
-                ModelState.AddModelError("ProductName", "Product Name is required.");
-
-            if (product.CategoryID <= 0)
-                ModelState.AddModelError("CategoryID", "Category is required.");
-
-            if (product.SupplierID <= 0)
-                ModelState.AddModelError("SupplierID", "Supplier is required.");
-
-            if (product.QuantityInStock <= 0)
-                ModelState.AddModelError("QuantityInStock", "Quantity must be greater than 0.");
-
-            if (product.UnitPrice <= 0)
-                ModelState.AddModelError("UnitPrice", "Unit Price must be greater than 0.");
-
             if (!ModelState.IsValid)
-                return View(product);
+                return View(dto);
+
+            var product = new Product
+            {
+                UID = Guid.NewGuid().ToString(),
+                ProductName = dto.ProductName,
+                CategoryID = dto.CategoryID,
+                SupplierID = dto.SupplierID,
+                QuantityInStock = dto.QuantityInStock,
+                UnitPrice = dto.UnitPrice,
+                imageUrl = dto.imageUrl
+            };
 
             if (image != null && image.Length > 0)
                 product.imageUrl = UploadImage(image);
 
-            _db.Products.Add(product);
-            _db.SaveChanges();
+            _productRepo.Add(product);
+            _productRepo.Save();
 
             return RedirectToAction("Index");
         }
@@ -89,38 +103,47 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Edit(string uid)
         {
-            var product = _db.Products
-                .Include(p => p.Category)
-                .Include(p => p.Supplier)
-                .FirstOrDefault(p => p.UID == uid);
-
+            var product = _productRepo.GetByUid(uid);
             if (product == null) return NotFound();
 
+            var dto = new UpdateProductDto
+            {
+                ProductID = product.ProductID,
+                UID = product.UID,
+                ProductName = product.ProductName,
+                CategoryID = product.CategoryID,
+                SupplierID = product.SupplierID,
+                QuantityInStock = product.QuantityInStock,
+                UnitPrice = product.UnitPrice,
+                imageUrl = product.imageUrl
+            };
+
             LoadDropDowns();
-            return View(product);
+            return View(dto);
         }
 
         // ============================
         // EDIT POST
         // ============================
         [HttpPost]
-        public IActionResult Edit(Product product, IFormFile image)
+        public IActionResult Edit(UpdateProductDto dto, IFormFile image)
         {
             LoadDropDowns();
 
-            var existing = _db.Products.FirstOrDefault(x => x.UID == product.UID);
+            var existing = _productRepo.GetByUid(dto.UID);
             if (existing == null) return NotFound();
 
-            existing.ProductName = product.ProductName;
-            existing.UnitPrice = product.UnitPrice;
-            existing.CategoryID = product.CategoryID;
-            existing.SupplierID = product.SupplierID;
-            existing.QuantityInStock = product.QuantityInStock;
+            existing.ProductName = dto.ProductName;
+            existing.UnitPrice = dto.UnitPrice;
+            existing.CategoryID = dto.CategoryID;
+            existing.SupplierID = dto.SupplierID;
+            existing.QuantityInStock = dto.QuantityInStock;
 
             if (image != null && image.Length > 0)
                 existing.imageUrl = UploadImage(image);
 
-            _db.SaveChanges();
+            _productRepo.Update(existing);
+            _productRepo.Save();
 
             return RedirectToAction("Index");
         }
@@ -131,27 +154,37 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var product = _db.Products
-                .Include(p => p.Category)
-                .Include(p => p.Supplier)
-                .FirstOrDefault(p => p.UID == uid);
-
+            var product = _productRepo.GetByUid(uid);
             if (product == null) return NotFound();
 
-            return View(product);
+            var dto = new ProductDto
+            {
+                ProductID = product.ProductID,
+                UID = product.UID,
+                ProductName = product.ProductName,
+                CategoryID = product.CategoryID,
+                SupplierID = product.SupplierID,
+                QuantityInStock = product.QuantityInStock,
+                UnitPrice = product.UnitPrice,
+                imageUrl = product.imageUrl,
+                CategoryName = product.Category?.CategoryName,
+                SupplierName = product.Supplier?.SupplierName
+            };
+
+            return View(dto);
         }
 
         // ============================
         // DELETE POST
         // ============================
         [HttpPost]
-        public IActionResult Delete(Product product)
+        public IActionResult DeleteConfirmed(string uid)
         {
-            var existing = _db.Products.FirstOrDefault(x => x.UID == product.UID);
+            var existing = _productRepo.GetByUid(uid);
             if (existing == null) return NotFound();
 
-            _db.Products.Remove(existing);
-            _db.SaveChanges();
+            _productRepo.Delete(existing);
+            _productRepo.Save();
 
             return RedirectToAction("Index");
         }

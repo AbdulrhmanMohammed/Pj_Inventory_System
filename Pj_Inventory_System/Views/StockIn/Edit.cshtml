@@ -1,9 +1,12 @@
-﻿@model StockIn
+﻿@model Pj_Inventory_System.Dtos.StockInDtos.UpdateStockInDto
 
 <form method="post" asp-action="Edit">
 
     <!-- مهم جداً: نرسل الـ UID -->
     <input type="hidden" asp-for="UID" />
+
+    <!-- مهم جداً: نرسل الـ StockInID -->
+    <input type="hidden" asp-for="StockInID" />
 
     <label>Product</label>
     <select asp-for="ProductID" class="form-control" asp-items="ViewBag.Products"></select>

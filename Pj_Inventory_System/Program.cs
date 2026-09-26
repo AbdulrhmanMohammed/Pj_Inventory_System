@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Pj_Inventory_System.Data;
+using Pj_Inventory_System.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,22 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<InventorySystemDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register the repository interfaces and their implementations
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+// Supplier Repository
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+
+builder.Services.AddScoped<IStockInRepository, StockInRepository>();
+
+builder.Services.AddScoped<IStockOutRepository, StockOutRepository>();
+
+
+
 
 
 var app = builder.Build();

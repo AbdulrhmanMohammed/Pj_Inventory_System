@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Supplier>
+﻿@model IEnumerable<Pj_Inventory_System.Dtos.SupplierDtos.SupplierDto>
 
 @{
     ViewData["Title"] = "Supplier Page";
@@ -25,7 +25,7 @@
                 <tr>
                     <td>@supplier.SupplierID</td>
                     <td>@supplier.SupplierName</td>
-                    <td>@supplier.Products?.Count</td>
+                    <td>@supplier.ProductsCount</td>
 
                     <td>
                         <a asp-action="Edit"

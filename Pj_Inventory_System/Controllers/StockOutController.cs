@@ -1,111 +1,163 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Pj_Inventory_System.Data;
+using Pj_Inventory_System.Dtos.StockOutDtos;
 using Pj_Inventory_System.Models;
+using Pj_Inventory_System.Repositories;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class StockOutController : Controller
     {
-        private readonly InventorySystemDbContext _db;
+        private readonly IStockOutRepository _stockOutRepo;
+        private readonly IProductRepository _productRepo;
 
-        public StockOutController(InventorySystemDbContext db)
+        public StockOutController(
+            IStockOutRepository stockOutRepo,
+            IProductRepository productRepo)
         {
-            _db = db;
+            _stockOutRepo = stockOutRepo;
+            _productRepo = productRepo;
         }
 
+        // ============================
+        // LOAD DROPDOWNS
+        // ============================
+        private void LoadDropDowns()
+        {
+            ViewBag.Products = new SelectList(
+                _productRepo.GetAll(), "ProductID", "ProductName");
+        }
+
+        // ============================
+        // INDEX
+        // ============================
         [HttpGet]
         public IActionResult Index()
         {
-            var stockOut = _db.StockOut
-                .Include(s => s.Product)
+            var stockOut = _stockOutRepo.GetAll()
+                .Select(s => new StockOutDto
+                {
+                    StockOutID = s.StockOutID,
+                    UID = s.UID,
+                    ProductID = s.ProductID,
+                    Quantity = s.Quantity,
+                    DateOut = s.DateOut,
+                    ProductName = s.Product?.ProductName
+                })
                 .ToList();
 
             return View(stockOut);
         }
 
+        // ============================
+        // CREATE GET
+        // ============================
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
+            LoadDropDowns();
             return View();
         }
 
+        // ============================
+        // CREATE POST
+        // ============================
         [HttpPost]
-        public IActionResult Create(StockOut stockOut)
+        public IActionResult Create(CreateStockOutDto dto)
         {
-            if (ModelState.IsValid)
+            LoadDropDowns();
+
+            if (!ModelState.IsValid)
+                return View(dto);
+
+            var stockOut = new StockOut
             {
-                if (string.IsNullOrEmpty(stockOut.UID))
-                    stockOut.UID = Guid.NewGuid().ToString();
+                UID = Guid.NewGuid().ToString(),
+                ProductID = dto.ProductID,
+                Quantity = dto.Quantity,
+                DateOut = dto.DateOut
+            };
 
-                _db.StockOut.Add(stockOut);
-                _db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
-            return View(stockOut);
-        }
-
-        // -----------------------------
-        // EDIT USING UID
-        // -----------------------------
-        [HttpGet]
-        public IActionResult Edit(string uid)
-        {
-            var stockOut = _db.StockOut
-                .Include(s => s.Product)
-                .FirstOrDefault(x => x.UID == uid);
-
-            if (stockOut == null) return NotFound();
-
-            ViewBag.Products = new SelectList(_db.Products.ToList(), "ProductID", "ProductName");
-            return View(stockOut);
-        }
-
-        [HttpPost]
-        public IActionResult Edit(StockOut stockOut)
-        {
-            var existing = _db.StockOut.FirstOrDefault(x => x.UID == stockOut.UID);
-
-            if (existing == null)
-                return NotFound();
-
-            existing.ProductID = stockOut.ProductID;
-            existing.Quantity = stockOut.Quantity;
-            existing.DateOut = stockOut.DateOut;
-
-            _db.SaveChanges();
+            _stockOutRepo.Add(stockOut);
+            _stockOutRepo.Save();
 
             return RedirectToAction("Index");
         }
 
-        // -----------------------------
-        // DELETE USING UID
-        // -----------------------------
+        // ============================
+        // EDIT GET (بالـ UID)
+        // ============================
+        [HttpGet]
+        public IActionResult Edit(string uid)
+        {
+            var stockOut = _stockOutRepo.GetByUid(uid);
+            if (stockOut == null) return NotFound();
+
+            var dto = new UpdateStockOutDto
+            {
+                StockOutID = stockOut.StockOutID,
+                UID = stockOut.UID,
+                ProductID = stockOut.ProductID,
+                Quantity = stockOut.Quantity,
+                DateOut = stockOut.DateOut
+            };
+
+            LoadDropDowns();
+            return View(dto);
+        }
+
+        // ============================
+        // EDIT POST
+        // ============================
+        [HttpPost]
+        public IActionResult Edit(UpdateStockOutDto dto)
+        {
+            var existing = _stockOutRepo.GetByUid(dto.UID);
+            if (existing == null) return NotFound();
+
+            existing.ProductID = dto.ProductID;
+            existing.Quantity = dto.Quantity;
+            existing.DateOut = dto.DateOut;
+
+            _stockOutRepo.Update(existing);
+            _stockOutRepo.Save();
+
+            return RedirectToAction("Index");
+        }
+
+        // ============================
+        // DELETE GET (بالـ UID)
+        // ============================
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var stockOut = _db.StockOut
-                .Include(s => s.Product)
-                .FirstOrDefault(s => s.UID == uid);
-
+            var stockOut = _stockOutRepo.GetByUid(uid);
             if (stockOut == null) return NotFound();
-            return View(stockOut);
+
+            var dto = new StockOutDto
+            {
+                StockOutID = stockOut.StockOutID,
+                UID = stockOut.UID,
+                ProductID = stockOut.ProductID,
+                Quantity = stockOut.Quantity,
+                DateOut = stockOut.DateOut,
+                ProductName = stockOut.Product?.ProductName
+            };
+
+            return View(dto);
         }
 
+        // ============================
+        // DELETE POST
+        // ============================
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var stockOut = _db.StockOut.FirstOrDefault(x => x.UID == uid);
+            var stockOut = _stockOutRepo.GetByUid(uid);
+            if (stockOut == null) return NotFound();
 
-            if (stockOut != null)
-            {
-                _db.StockOut.Remove(stockOut);
-                _db.SaveChanges();
-            }
+            _stockOutRepo.Delete(stockOut);
+            _stockOutRepo.Save();
 
             return RedirectToAction("Index");
         }

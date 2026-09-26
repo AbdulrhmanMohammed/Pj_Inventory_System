@@ -1,9 +1,12 @@
-﻿@model Supplier
+﻿@model Pj_Inventory_System.Dtos.SupplierDtos.UpdateSupplierDto
 
 <form method="post" asp-action="Edit">
 
     <!-- مهم جداً: نرسل الـ UID -->
     <input type="hidden" asp-for="UID" />
+
+    <!-- مهم جداً: نرسل الـ SupplierID -->
+    <input type="hidden" asp-for="SupplierID" />
 
     <label>Supplier Name</label>
     <input asp-for="SupplierName" class="form-control" />

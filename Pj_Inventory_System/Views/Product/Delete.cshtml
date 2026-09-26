@@ -1,6 +1,6 @@
-﻿@model Product
+﻿@model Pj_Inventory_System.Dtos.ProductDtos.ProductDto
 
-<form method="post" asp-action="Delete">
+<form method="post" asp-action="DeleteConfirmed">
 
     <!-- مهم جداً: نرسل الـ UID -->
     <input type="hidden" asp-for="UID" />
@@ -9,11 +9,12 @@
     <input asp-for="ProductName" class="form-control" readonly />
 
     <label>Category</label>
-    <input value="@Model.Category.CategoryName" class="form-control" readonly />
+    <input value="@Model.CategoryName" class="form-control" readonly />
 
     <label>Supplier</label>
-    <input value="@Model.Supplier.SupplierName" class="form-control" readonly />
+    <input value="@Model.SupplierName" class="form-control" readonly />
 
     <button type="submit" class="btn btn-danger mt-3">Delete</button>
     <a asp-action="Index" class="btn btn-secondary mt-3">Cancel</a>
+
 </form>
