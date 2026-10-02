@@ -16,4 +16,10 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pj_Inventory_System.Application\Pj_Inventory_System.Application.csproj" />
+    <ProjectReference Include="..\Pj_Inventory_System.Domain\Pj_Inventory_System.Domain.csproj" />
+    <ProjectReference Include="..\Pj_Inventory_System.Infrastructure\Pj_Inventory_System.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

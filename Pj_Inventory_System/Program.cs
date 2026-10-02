@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Pj_Inventory_System.Data;
-using Pj_Inventory_System.Repositories;
-using Pj_Inventory_System.Services;
-using Pj_Inventory_System.Services.Base;
+using Pj_Inventory_System.Infrastructure.Data;
+using Pj_Inventory_System.Infrastructure.Repositories;
+using Pj_Inventory_System.Application.Services;
+using Pj_Inventory_System.Application.Services.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 

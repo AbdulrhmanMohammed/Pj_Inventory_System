@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pj_Inventory_System.Data;
-using Pj_Inventory_System.Models;
+using Pj_Inventory_System.Infrastructure.Data;
+using Pj_Inventory_System.Domain.Models;
 
 namespace Pj_Inventory_System.Controllers
 {

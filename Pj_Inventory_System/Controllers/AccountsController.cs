@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Pj_Inventory_System.Data;
+using Pj_Inventory_System.Infrastructure.Data;
 
 
 namespace Pj_Inventory_System.Controllers
