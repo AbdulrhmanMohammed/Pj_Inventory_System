@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Pj_Inventory_System.API/Pj_Inventory_System.API.csproj" Id="d50f94fe-7cde-437b-b88e-f39d6c1f8624" />
   <Project Path="Pj_Inventory_System.Application/Pj_Inventory_System.Application.csproj" Id="52c150dc-2402-4c3e-8e81-bfb416685e65" />
   <Project Path="Pj_Inventory_System.Domain/Pj_Inventory_System.Domain.csproj" Id="d715ff32-bad2-4aed-992f-34581abb0c17" />
   <Project Path="Pj_Inventory_System.Infrastructure/Pj_Inventory_System.Infrastructure.csproj" Id="f92c58d1-e363-4ff8-a585-bee80cafbda3" />
