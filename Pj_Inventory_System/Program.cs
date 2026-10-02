@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Pj_Inventory_System.Data;
 using Pj_Inventory_System.Repositories;
+using Pj_Inventory_System.Services;
+using Pj_Inventory_System.Services.Base;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,13 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IStockInRepository, StockInRepository>();
 
 builder.Services.AddScoped<IStockOutRepository, StockOutRepository>();
+
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IStockInService, StockInService>();
+builder.Services.AddScoped<IStockOutService, StockOutService>();
+
 
 
 

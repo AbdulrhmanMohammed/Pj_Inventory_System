@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pj_Inventory_System.Dtos.SupplierDtos;
 using Pj_Inventory_System.Models;
-using Pj_Inventory_System.Repositories;
+using Pj_Inventory_System.Services.Base;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class SupplierController : Controller
     {
-        private readonly ISupplierRepository _supplierRepo;
+        private readonly ISupplierService _supplierService;
 
-        public SupplierController(ISupplierRepository supplierRepo)
+        public SupplierController(ISupplierService supplierService)
         {
-            _supplierRepo = supplierRepo;
+            _supplierService = supplierService;
         }
 
         // ============================
@@ -20,7 +20,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var suppliers = _supplierRepo.GetAll()
+            var suppliers = _supplierService.GetAll()
                 .Select(s => new SupplierDto
                 {
                     SupplierID = s.SupplierID,
@@ -57,8 +57,7 @@ namespace Pj_Inventory_System.Controllers
                 SupplierName = dto.SupplierName
             };
 
-            _supplierRepo.Add(supplier);
-            _supplierRepo.Save();
+            _supplierService.Create(supplier);
 
             return RedirectToAction("Index");
         }
@@ -69,7 +68,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Edit(string uid)
         {
-            var supplier = _supplierRepo.GetByUid(uid);
+            var supplier = _supplierService.GetByUid(uid);
             if (supplier == null) return NotFound();
 
             var dto = new UpdateSupplierDto
@@ -88,15 +87,14 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult Edit(UpdateSupplierDto dto)
         {
-            var existing = _supplierRepo.GetByUid(dto.UID);
+            var existing = _supplierService.GetByUid(dto.UID);
 
             if (existing == null)
                 return NotFound();
 
             existing.SupplierName = dto.SupplierName;
 
-            _supplierRepo.Update(existing);
-            _supplierRepo.Save();
+            _supplierService.Update(existing);
 
             return RedirectToAction("Index");
         }
@@ -107,7 +105,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var supplier = _supplierRepo.GetByUid(uid);
+            var supplier = _supplierService.GetByUid(uid);
             if (supplier == null) return NotFound();
 
             var dto = new SupplierDto
@@ -127,12 +125,11 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var supplier = _supplierRepo.GetByUid(uid);
+            var supplier = _supplierService.GetByUid(uid);
 
             if (supplier != null)
             {
-                _supplierRepo.Delete(supplier);
-                _supplierRepo.Save();
+                _supplierService.Delete(supplier);
             }
 
             return RedirectToAction("Index");

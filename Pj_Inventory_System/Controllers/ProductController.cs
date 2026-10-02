@@ -2,33 +2,33 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Pj_Inventory_System.Dtos.ProductDtos;
 using Pj_Inventory_System.Models;
-using Pj_Inventory_System.Repositories;
+using Pj_Inventory_System.Services.Base;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class ProductController : Controller
     {
-        private readonly IProductRepository _productRepo;
-        private readonly ICategoryRepository _categoryRepo;
-        private readonly ISupplierRepository _supplierRepo;
+        private readonly IProductService _productService;
+        private readonly ICategoryService _categoryService;
+        private readonly ISupplierService _supplierService;
 
         public ProductController(
-            IProductRepository productRepo,
-            ICategoryRepository categoryRepo,
-            ISupplierRepository supplierRepo)
+            IProductService productService,
+            ICategoryService categoryService,
+            ISupplierService supplierService)
         {
-            _productRepo = productRepo;
-            _categoryRepo = categoryRepo;
-            _supplierRepo = supplierRepo;
+            _productService = productService;
+            _categoryService = categoryService;
+            _supplierService = supplierService;
         }
 
         private void LoadDropDowns()
         {
             ViewBag.Categories = new SelectList(
-                _categoryRepo.GetAll(), "CategoryID", "CategoryName");
+                _categoryService.GetAll(), "CategoryID", "CategoryName");
 
             ViewBag.Suppliers = new SelectList(
-                _supplierRepo.GetAll(), "SupplierID", "SupplierName");
+                _supplierService.GetAll(), "SupplierID", "SupplierName");
         }
 
         // ============================
@@ -37,7 +37,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var products = _productRepo.GetAll()
+            var products = _productService.GetAll()
                 .Select(p => new ProductDto
                 {
                     ProductID = p.ProductID,
@@ -91,8 +91,7 @@ namespace Pj_Inventory_System.Controllers
             if (image != null && image.Length > 0)
                 product.imageUrl = UploadImage(image);
 
-            _productRepo.Add(product);
-            _productRepo.Save();
+            _productService.Create(product);
 
             return RedirectToAction("Index");
         }
@@ -103,7 +102,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Edit(string uid)
         {
-            var product = _productRepo.GetByUid(uid);
+            var product = _productService.GetByUid(uid);
             if (product == null) return NotFound();
 
             var dto = new UpdateProductDto
@@ -130,7 +129,7 @@ namespace Pj_Inventory_System.Controllers
         {
             LoadDropDowns();
 
-            var existing = _productRepo.GetByUid(dto.UID);
+            var existing = _productService.GetByUid(dto.UID);
             if (existing == null) return NotFound();
 
             existing.ProductName = dto.ProductName;
@@ -142,8 +141,7 @@ namespace Pj_Inventory_System.Controllers
             if (image != null && image.Length > 0)
                 existing.imageUrl = UploadImage(image);
 
-            _productRepo.Update(existing);
-            _productRepo.Save();
+            _productService.Update(existing);
 
             return RedirectToAction("Index");
         }
@@ -154,7 +152,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var product = _productRepo.GetByUid(uid);
+            var product = _productService.GetByUid(uid);
             if (product == null) return NotFound();
 
             var dto = new ProductDto
@@ -180,11 +178,10 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var existing = _productRepo.GetByUid(uid);
+            var existing = _productService.GetByUid(uid);
             if (existing == null) return NotFound();
 
-            _productRepo.Delete(existing);
-            _productRepo.Save();
+            _productService.Delete(existing);
 
             return RedirectToAction("Index");
         }

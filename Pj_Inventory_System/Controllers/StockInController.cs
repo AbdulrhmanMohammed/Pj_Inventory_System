@@ -2,21 +2,21 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Pj_Inventory_System.Dtos.StockInDtos;
 using Pj_Inventory_System.Models;
-using Pj_Inventory_System.Repositories;
+using Pj_Inventory_System.Services.Base;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class StockInController : Controller
     {
-        private readonly IStockInRepository _stockInRepo;
-        private readonly IProductRepository _productRepo;
+        private readonly IStockInService _stockInService;
+        private readonly IProductService _productService;
 
         public StockInController(
-            IStockInRepository stockInRepo,
-            IProductRepository productRepo)
+            IStockInService stockInService,
+            IProductService productService)
         {
-            _stockInRepo = stockInRepo;
-            _productRepo = productRepo;
+            _stockInService = stockInService;
+            _productService = productService;
         }
 
         // ============================
@@ -25,7 +25,7 @@ namespace Pj_Inventory_System.Controllers
         private void LoadDropDowns()
         {
             ViewBag.Products = new SelectList(
-                _productRepo.GetAll(), "ProductID", "ProductName");
+                _productService.GetAll(), "ProductID", "ProductName");
         }
 
         // ============================
@@ -34,7 +34,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var stockIn = _stockInRepo.GetAll()
+            var stockIn = _stockInService.GetAll()
                 .Select(s => new StockInDto
                 {
                     StockInID = s.StockInID,
@@ -78,8 +78,7 @@ namespace Pj_Inventory_System.Controllers
                 DateIn = dto.DateIn
             };
 
-            _stockInRepo.Add(stockIn);
-            _stockInRepo.Save();
+            _stockInService.Create(stockIn);
 
             return RedirectToAction("Index");
         }
@@ -90,7 +89,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Edit(string uid)
         {
-            var stockIn = _stockInRepo.GetByUid(uid);
+            var stockIn = _stockInService.GetByUid(uid);
             if (stockIn == null) return NotFound();
 
             var dto = new UpdateStockInDto
@@ -112,15 +111,14 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult Edit(UpdateStockInDto dto)
         {
-            var existing = _stockInRepo.GetByUid(dto.UID);
+            var existing = _stockInService.GetByUid(dto.UID);
             if (existing == null) return NotFound();
 
             existing.ProductID = dto.ProductID;
             existing.Quantity = dto.Quantity;
             existing.DateIn = dto.DateIn;
 
-            _stockInRepo.Update(existing);
-            _stockInRepo.Save();
+            _stockInService.Update(existing);
 
             return RedirectToAction("Index");
         }
@@ -131,7 +129,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var stockIn = _stockInRepo.GetByUid(uid);
+            var stockIn = _stockInService.GetByUid(uid);
             if (stockIn == null) return NotFound();
 
             var dto = new StockInDto
@@ -153,11 +151,10 @@ namespace Pj_Inventory_System.Controllers
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var stockIn = _stockInRepo.GetByUid(uid);
+            var stockIn = _stockInService.GetByUid(uid);
             if (stockIn == null) return NotFound();
 
-            _stockInRepo.Delete(stockIn);
-            _stockInRepo.Save();
+            _stockInService.Delete(stockIn);
 
             return RedirectToAction("Index");
         }

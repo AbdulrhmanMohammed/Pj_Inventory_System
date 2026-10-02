@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pj_Inventory_System.Dtos.CategoryDtos;
 using Pj_Inventory_System.Models;
-using Pj_Inventory_System.Repositories;
+using Pj_Inventory_System.Services.Base;
 
 namespace Pj_Inventory_System.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _repo;
+        private readonly ICategoryService _service;
 
-        public CategoryController(ICategoryRepository repo)
+        public CategoryController(ICategoryService service)
         {
-            _repo = repo;
+            _service = service;
         }
 
         // ============================
@@ -20,7 +20,7 @@ namespace Pj_Inventory_System.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var categories = _repo.GetAll()
+            var categories = _service.GetAll()
                 .Select(c => new CategoryDto
                 {
                     CategoryID = c.CategoryID,
@@ -32,7 +32,7 @@ namespace Pj_Inventory_System.Controllers
         }
 
         // ============================
-        // CREATE
+        // CREATE GET
         // ============================
         [HttpGet]
         public IActionResult Create()
@@ -40,6 +40,9 @@ namespace Pj_Inventory_System.Controllers
             return View();
         }
 
+        // ============================
+        // CREATE POST
+        // ============================
         [HttpPost]
         public IActionResult Create(CreateCategoryDto dto)
         {
@@ -52,53 +55,62 @@ namespace Pj_Inventory_System.Controllers
                 UID = Guid.NewGuid().ToString()
             };
 
-            _repo.Add(category);
-            _repo.Save();
+            _service.Create(category);
 
             return RedirectToAction("Index");
         }
 
         // ============================
-        // EDIT USING UID
+        // EDIT GET 
         // ============================
         [HttpGet]
         public IActionResult Edit(string uid)
         {
-            var category = _repo.GetByUid(uid);
+            if (string.IsNullOrEmpty(uid))
+                return NotFound();
+
+            var category = _service.GetByUid(uid);
             if (category == null) return NotFound();
 
             var dto = new UpdateCategoryDto
             {
                 CategoryID = category.CategoryID,
-                CategoryName = category.CategoryName
+                CategoryName = category.CategoryName,
+                UID = category.UID
             };
 
             return View(dto);
         }
 
+        // ============================
+        // EDIT POST
+        // ============================
         [HttpPost]
         public IActionResult Edit(UpdateCategoryDto dto)
         {
-            var existing = _repo.GetById(dto.CategoryID);
+            if (!ModelState.IsValid)
+                return View(dto);
 
-            if (existing == null)
-                return NotFound();
+            var existing = _service.GetById(dto.CategoryID);
+            if (existing == null) return NotFound();
 
             existing.CategoryName = dto.CategoryName;
 
-            _repo.Update(existing);
-            _repo.Save();
+            _service.Update(existing);
 
             return RedirectToAction("Index");
         }
 
         // ============================
-        // DELETE USING UID
+        // DELETE GET 
         // ============================
         [HttpGet]
         public IActionResult Delete(string uid)
         {
-            var category = _repo.GetByUid(uid);
+            if (string.IsNullOrEmpty(uid))
+                return NotFound();
+
+            var category = _service.GetByUid(uid);
             if (category == null) return NotFound();
 
             var dto = new CategoryDto
@@ -111,16 +123,16 @@ namespace Pj_Inventory_System.Controllers
             return View(dto);
         }
 
+        // ============================
+        // DELETE POST 
+        // ============================
         [HttpPost]
         public IActionResult DeleteConfirmed(string uid)
         {
-            var category = _repo.GetByUid(uid);
+            var category = _service.GetByUid(uid);
+            if (category == null) return NotFound();
 
-            if (category != null)
-            {
-                _repo.Delete(category);
-                _repo.Save();
-            }
+            _service.Delete(category);
 
             return RedirectToAction("Index");
         }
