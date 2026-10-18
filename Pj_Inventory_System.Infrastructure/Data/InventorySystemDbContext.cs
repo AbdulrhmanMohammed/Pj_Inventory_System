@@ -29,6 +29,9 @@ namespace Pj_Inventory_System.Infrastructure.Data
 
         public DbSet<UserFile> UserFiles { get; set; }
 
+        public DbSet<CartItem> CartItems { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

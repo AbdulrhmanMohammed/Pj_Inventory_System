@@ -22,7 +22,46 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Category", b =>
+            modelBuilder.Entity("PermissionRole", b =>
+                {
+                    b.Property<int>("PermissionsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RolesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PermissionsId", "RolesId");
+
+                    b.HasIndex("RolesId");
+
+                    b.ToTable("PermissionRole");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.CartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Category", b =>
                 {
                     b.Property<int>("CategoryID")
                         .ValueGeneratedOnAdd()
@@ -43,22 +82,7 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("PermissionRole", b =>
-                {
-                    b.Property<int>("PermissionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RolesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PermissionsId", "RolesId");
-
-                    b.HasIndex("RolesId");
-
-                    b.ToTable("PermissionRole");
-                });
-
-            modelBuilder.Entity("Pj_Inventory_System.Models.Permission", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Permission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,7 +103,7 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("Permissions");
                 });
 
-            modelBuilder.Entity("Pj_Inventory_System.Models.PermissionRole", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.PermissionRole", b =>
                 {
                     b.Property<int>("RolesId")
                         .HasColumnType("int");
@@ -99,7 +123,47 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("PermissionRoles");
                 });
 
-            modelBuilder.Entity("Pj_Inventory_System.Models.Role", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Product", b =>
+                {
+                    b.Property<int>("ProductID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"));
+
+                    b.Property<int>("CategoryID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuantityInStock")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("imageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProductID");
+
+                    b.HasIndex("CategoryID");
+
+                    b.HasIndex("SupplierID");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -120,7 +184,7 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Pj_Inventory_System.Models.RoleUser", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.RoleUser", b =>
                 {
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -135,7 +199,84 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("RoleUsers");
                 });
 
-            modelBuilder.Entity("Pj_Inventory_System.Models.User", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.StockIn", b =>
+                {
+                    b.Property<int>("StockInID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StockInID"));
+
+                    b.Property<DateTime>("DateIn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StockInID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("StockIn");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.StockOut", b =>
+                {
+                    b.Property<int>("StockOutID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StockOutID"));
+
+                    b.Property<DateTime>("DateOut")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StockOutID");
+
+                    b.HasIndex("ProductID");
+
+                    b.ToTable("StockOut");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Supplier", b =>
+                {
+                    b.Property<int>("SupplierID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SupplierID"));
+
+                    b.Property<string>("SupplierName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("SupplierID");
+
+                    b.ToTable("Supplier");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -167,7 +308,7 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Pj_Inventory_System.Models.UserFile", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.UserFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -197,47 +338,6 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("UserFiles");
                 });
 
-            modelBuilder.Entity("Product", b =>
-                {
-                    b.Property<int>("ProductID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductID"));
-
-                    b.Property<int>("CategoryID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("QuantityInStock")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SupplierID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("imageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ProductID");
-
-                    b.HasIndex("CategoryID");
-
-                    b.HasIndex("SupplierID");
-
-                    b.ToTable("Products");
-                });
-
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.Property<int>("RolesId")
@@ -253,107 +353,41 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.ToTable("RoleUser");
                 });
 
-            modelBuilder.Entity("StockIn", b =>
-                {
-                    b.Property<int>("StockInID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StockInID"));
-
-                    b.Property<DateTime>("DateIn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("StockInID");
-
-                    b.HasIndex("ProductID");
-
-                    b.ToTable("StockIn");
-                });
-
-            modelBuilder.Entity("StockOut", b =>
-                {
-                    b.Property<int>("StockOutID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StockOutID"));
-
-                    b.Property<DateTime>("DateOut")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ProductID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("StockOutID");
-
-                    b.HasIndex("ProductID");
-
-                    b.ToTable("StockOut");
-                });
-
-            modelBuilder.Entity("Supplier", b =>
-                {
-                    b.Property<int>("SupplierID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SupplierID"));
-
-                    b.Property<string>("SupplierName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SupplierID");
-
-                    b.ToTable("Supplier");
-                });
-
             modelBuilder.Entity("PermissionRole", b =>
                 {
-                    b.HasOne("Pj_Inventory_System.Models.Permission", null)
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Permission", null)
                         .WithMany()
                         .HasForeignKey("PermissionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pj_Inventory_System.Models.Role", null)
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pj_Inventory_System.Models.PermissionRole", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.CartItem", b =>
                 {
-                    b.HasOne("Pj_Inventory_System.Models.Permission", "Permissions")
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.PermissionRole", b =>
+                {
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Permission", "Permissions")
                         .WithMany()
                         .HasForeignKey("PermissionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pj_Inventory_System.Models.Role", "Role")
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Role", "Role")
                         .WithMany()
                         .HasForeignKey("RoleId");
 
@@ -362,45 +396,15 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Pj_Inventory_System.Models.RoleUser", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Product", b =>
                 {
-                    b.HasOne("Pj_Inventory_System.Models.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Pj_Inventory_System.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Pj_Inventory_System.Models.UserFile", b =>
-                {
-                    b.HasOne("Pj_Inventory_System.Models.User", "Users")
-                        .WithMany()
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Product", b =>
-                {
-                    b.HasOne("Category", "Category")
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Supplier", "Supplier")
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Supplier", "Supplier")
                         .WithMany("Products")
                         .HasForeignKey("SupplierID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -411,49 +415,79 @@ namespace Pj_Inventory_System.Infrastructure.Migrations
                     b.Navigation("Supplier");
                 });
 
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.RoleUser", b =>
+                {
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Pj_Inventory_System.Domain.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.StockIn", b =>
+                {
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.StockOut", b =>
+                {
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.UserFile", b =>
+                {
+                    b.HasOne("Pj_Inventory_System.Domain.Models.User", "Users")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.HasOne("Pj_Inventory_System.Models.Role", null)
+                    b.HasOne("Pj_Inventory_System.Domain.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Pj_Inventory_System.Models.User", null)
+                    b.HasOne("Pj_Inventory_System.Domain.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("StockIn", b =>
-                {
-                    b.HasOne("Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("StockOut", b =>
-                {
-                    b.HasOne("Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Category", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Supplier", b =>
+            modelBuilder.Entity("Pj_Inventory_System.Domain.Models.Supplier", b =>
                 {
                     b.Navigation("Products");
                 });

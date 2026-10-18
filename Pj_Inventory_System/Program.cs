@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Pj_Inventory_System.Infrastructure.Data;
-using Pj_Inventory_System.Infrastructure.Repositories;
+using Pj_Inventory_System.API.Services.CartItemService;
+using Pj_Inventory_System.API.Services.CartItemService.Base;
 using Pj_Inventory_System.Application.Services;
 using Pj_Inventory_System.Application.Services.Base;
+using Pj_Inventory_System.Infrastructure.Data;
+using Pj_Inventory_System.Infrastructure.Repositories;
+using Pj_Inventory_System.Infrastructure.Repositories.CartItemRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,11 @@ builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IStockInService, StockInService>();
 builder.Services.AddScoped<IStockOutService, StockOutService>();
+
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+
+
 
 
 

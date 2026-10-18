@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Pj_Inventory_System.API.Services.CartItemService;
+using Pj_Inventory_System.API.Services.CartItemService.Base;
 using Pj_Inventory_System.Infrastructure.Data;
+using Pj_Inventory_System.Infrastructure.Repositories.CartItemRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,9 @@ builder.Services.AddDbContext<InventorySystemDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<ICartItemService, CartItemService>();
+
 
 var app = builder.Build();
 
