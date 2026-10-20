@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Pj_Inventory_System.Domain\Pj_Inventory_System.Domain.csproj" />
     <ProjectReference Include="..\Pj_Inventory_System.Infrastructure\Pj_Inventory_System.Infrastructure.csproj" />
   </ItemGroup>

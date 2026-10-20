@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Pj_Inventory_System.Application.Dtos;
+using Pj_Inventory_System.Application.Services.Base;
 using Pj_Inventory_System.Domain.Models;
 using Pj_Inventory_System.Infrastructure.Data;
-using Pj_Inventory_System.Application.Dtos;
 
 namespace Pj_Inventory_System.API.Controllers
 {
@@ -10,97 +11,78 @@ namespace Pj_Inventory_System.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly InventorySystemDbContext _context;
+        private readonly IUserService _userService;
 
-        public UsersController(InventorySystemDbContext context)
+        public UsersController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
+
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
+        public IActionResult Login([FromBody] LoginDto loginDto)
         {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == dto.Username);
+            User? user = _userService.Login(loginDto);
 
-            if (user == null)
+            if (user != null)
+            {
+                return Ok(new
+                {
+                    id = user.Id,
+                    username = user.Username,
+                    name = user.Name,
+                    email = user.Email,
+                    message = "Login Successful"
+                });
+            }
+            else
             {
                 return Unauthorized(new
                 {
-                    message = "اسم المستخدم غير موجود"
+                    message = "Invalid username or password"
                 });
             }
-
-            bool passwordMatch = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
-
-            if (!passwordMatch)
-            {
-                return Unauthorized(new
-                {
-                    message = "كلمة المرور غير صحيحة"
-                });
-            }
-
-            return Ok(new
-            {
-                message = "تم تسجيل الدخول بنجاح",
-                username = user.Username,
-                name = user.Name,
-                uid = user.UID
-            });
         }
 
+
+
+
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        public IActionResult Register([FromBody] RegisterDto registerDto)
         {
-            // Check empty fields
-            if (string.IsNullOrWhiteSpace(dto.Name) ||
-                string.IsNullOrWhiteSpace(dto.Email) ||
-                string.IsNullOrWhiteSpace(dto.Username) ||
-                string.IsNullOrWhiteSpace(dto.Password))
+            if (string.IsNullOrWhiteSpace(registerDto.Name) ||
+                string.IsNullOrWhiteSpace(registerDto.Email) ||
+                string.IsNullOrWhiteSpace(registerDto.Username) ||
+                string.IsNullOrWhiteSpace(registerDto.Password))
             {
-                return BadRequest(new { message = "Please fill in all fields" });
+                return BadRequest(new
+                {
+                    message = "All fields are required"
+                });
             }
 
-            // Password length check
-            if (dto.Password.Length < 6)
+            if (registerDto.Password.Length < 6)
             {
-                return BadRequest(new { message = "Password must be at least 6 characters" });
+                return BadRequest(new
+                {
+                    message = "Password must be at least 6 characters"
+                });
             }
 
-            // Check email
-            var emailExists = await _context.Users.AnyAsync(u => u.Email == dto.Email);
-            if (emailExists)
+            User? user = _userService.Register(registerDto);
+
+            if (user != null)
             {
-                return BadRequest(new { message = "Email is already in use" });
+                return Ok(new
+                {
+                    message = "Registration Successful"
+                });
             }
 
-            // Check username
-            var usernameExists = await _context.Users.AnyAsync(u => u.Username == dto.Username);
-            if (usernameExists)
+            return Conflict(new
             {
-                return BadRequest(new { message = "Username is already taken" });
-            }
-
-            // Create user
-            var user = new User
-            {
-                UID = Guid.NewGuid().ToString(),
-                Name = dto.Name,
-                Email = dto.Email,
-                Username = dto.Username,
-
-                // 🔥 هنا نحفظ كلمة المرور الأصلية
-                Password = dto.Password,
-
-                // 🔥 وهنا نحفظ الـ Hash
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Account created successfully" });
+                message = "Username or Email already exists"
+            });
         }
 
 
