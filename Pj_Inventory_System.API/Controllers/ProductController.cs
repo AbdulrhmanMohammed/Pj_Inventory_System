@@ -21,6 +21,7 @@ namespace Pj_Inventory_System.Controllers
             var products = await _db.Products
                 .Select(p => new
                 {
+                    p.ProductID,
                     p.ProductName,
                     p.QuantityInStock,
                     p.UnitPrice,

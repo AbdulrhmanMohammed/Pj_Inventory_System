@@ -28,7 +28,7 @@ namespace Pj_Inventory_System.API.Controllers
             {
                 return Ok(new
                 {
-                    id = user.Id,
+                    userid = user.Id,
                     username = user.Username,
                     name = user.Name,
                     email = user.Email,
