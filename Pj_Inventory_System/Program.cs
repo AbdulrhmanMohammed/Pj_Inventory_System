@@ -37,6 +37,14 @@ builder.Services.AddScoped<IStockOutService, StockOutService>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 builder.Services.AddScoped<ICartItemService, CartItemService>();
 
+builder.Services.AddScoped<
+    IOrderRepository,
+    OrderRepository>();
+
+builder.Services.AddScoped<
+    IOrderService,
+    OrderService>();
+
 
 
 

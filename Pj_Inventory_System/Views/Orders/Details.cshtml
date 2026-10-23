@@ -1,0 +1,37 @@
+﻿@model Pj_Inventory_System.Application.Dtos.OrderDtos.OrderDto
+
+<h2>Order Details</h2>
+
+<table class="table table-bordered">
+
+    <tr>
+        <th>Order ID</th>
+        <td>@Model.OrderID</td>
+    </tr>
+
+    <tr>
+        <th>User ID</th>
+        <td>@Model.UserId</td>
+    </tr>
+
+    <tr>
+        <th>Status</th>
+        <td>@Model.Status</td>
+    </tr>
+
+    <tr>
+        <th>Total Amount</th>
+        <td>@Model.TotalAmount</td>
+    </tr>
+
+    <tr>
+        <th>Created At</th>
+        <td>@Model.CreatedAt</td>
+    </tr>
+
+</table>
+
+<a asp-action="Index"
+   class="btn btn-primary">
+    Back
+</a>

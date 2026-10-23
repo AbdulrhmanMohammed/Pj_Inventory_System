@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Pj_Inventory_System.Application.Dtos.OrderDtos.OrderDto>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h2 class="mb-3">Orders List</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        Create New Order
+    </a>
+</p>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Order ID</th>
+            <th>User ID</th>
+            <th>Status</th>
+            <th>Total Amount</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.OrderID</td>
+                <td>@item.UserId</td>
+                <td>@item.Status</td>
+                <td>@item.TotalAmount</td>
+                <td>@item.CreatedAt</td>
+
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@item.OrderID"
+                       class="btn btn-warning btn-sm">
+                        Edit
+                    </a>
+
+                    <a asp-action="Details"
+                       asp-route-id="@item.OrderID"
+                       class="btn btn-info btn-sm">
+                        Details
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@item.OrderID"
+                       class="btn btn-danger btn-sm">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
