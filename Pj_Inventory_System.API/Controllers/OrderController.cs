@@ -36,32 +36,31 @@ namespace Second_ASP_EF.API.Controllers
 
         // GET: api/Orders/user/5
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetMyOrders(
-            int userId)
+        public async Task<IActionResult> GetMyOrders(int userId)
         {
-            var orders =
-                await _orderService.GetMyOrders(userId);
+            var orders = await _orderService.GetMyOrders(userId);
 
-            var result =
-                orders.Select(order => new
+            var result = orders.Select(order => new
+            {
+                order.Id,
+                order.UserId,
+                order.Status,
+                order.CreatedAt,
+                order.TotalAmount,
+
+                ProductNames = order.OrderItems
+                    .Select(i => i.Product.ProductName)
+                    .ToList(),
+
+                Items = order.OrderItems.Select(item => new
                 {
-                    order.Id,
-                    order.UserId,
-                    order.Status,
-                    order.CreatedAt,
-                    order.TotalAmount,
-
-                    Items = order.OrderItems.Select(item => new
-                    {
-                        item.Id,
-                        item.ProductId,
-                        item.Quantity,
-                        item.UnitPrice,
-
-                        ProductName =
-                            item.Product.ProductName
-                    }).ToList()
-                });
+                    item.Id,
+                    item.ProductId,
+                    item.Quantity,
+                    item.UnitPrice,
+                    ProductName = item.Product.ProductName
+                }).ToList()
+            });
 
             return Ok(result);
         }

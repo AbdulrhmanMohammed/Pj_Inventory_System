@@ -111,16 +111,18 @@ namespace Pj_Inventory_System.Application.Services
 
             foreach (var item in cartItems)
             {
-                order.OrderItems.Add(
-                    new OrderItem
-                    {
-                        ProductId = item.ProductId,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.Product.UnitPrice
-                    });
+                order.OrderItems.Add(new OrderItem
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.Product.UnitPrice
+                });
             }
 
             await _repo.AddAsync(order);
+
+            // حذف عناصر السلة بعد نقلها للأوردر
+            await _repo.DeleteCartItems(cartItems);
 
             await _repo.SaveChangesAsync();
 

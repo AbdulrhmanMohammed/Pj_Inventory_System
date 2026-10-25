@@ -68,5 +68,11 @@ namespace Pj_Inventory_System.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeleteCartItems(List<CartItem> cartItems)
+        {
+            _context.CartItems.RemoveRange(cartItems);
+            await Task.CompletedTask;
+        }
     }
 }
