@@ -20,6 +20,8 @@ namespace Pj_Inventory_System.Infrastructure.Repositories
 
         Task DeleteCartItems(List<CartItem> cartItems);
 
+        Task UpdateProduct(Product product);
+
         Task SaveChangesAsync();
     }
 }

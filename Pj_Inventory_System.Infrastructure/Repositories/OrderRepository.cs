@@ -74,5 +74,12 @@ namespace Pj_Inventory_System.Infrastructure.Repositories
             _context.CartItems.RemoveRange(cartItems);
             await Task.CompletedTask;
         }
+
+        public async Task UpdateProduct(Product product)
+        {
+            _context.Products.Update(product);
+            await Task.CompletedTask;
+        }
+
     }
 }

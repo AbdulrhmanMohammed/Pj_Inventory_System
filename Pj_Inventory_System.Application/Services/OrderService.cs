@@ -100,6 +100,21 @@ namespace Pj_Inventory_System.Application.Services
             if (!cartItems.Any())
                 return 0;
 
+            foreach (var item in cartItems)
+            {
+                if (item.Product.QuantityInStock <= 0)
+                {
+                    throw new Exception(
+                        $"{item.Product.ProductName} is out of stock");
+                }
+
+                if (item.Product.QuantityInStock < item.Quantity)
+                {
+                    throw new Exception(
+                        $"{item.Product.ProductName} has only {item.Product.QuantityInStock} item(s) available");
+                }
+            }
+
             var order = new Order
             {
                 UserId = userId,
@@ -117,11 +132,14 @@ namespace Pj_Inventory_System.Application.Services
                     Quantity = item.Quantity,
                     UnitPrice = item.Product.UnitPrice
                 });
+
+                item.Product.QuantityInStock -= item.Quantity;
+
+                await _repo.UpdateProduct(item.Product);
             }
 
             await _repo.AddAsync(order);
 
-            // حذف عناصر السلة بعد نقلها للأوردر
             await _repo.DeleteCartItems(cartItems);
 
             await _repo.SaveChangesAsync();
