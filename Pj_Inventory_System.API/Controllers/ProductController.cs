@@ -26,8 +26,9 @@ namespace Pj_Inventory_System.Controllers
                     p.ProductName,
                     p.QuantityInStock,
                     p.UnitPrice,
-                    imageUrl = $"{Request.Scheme}://{Request.Host}/images/product/{p.imageUrl}"
-                })
+                    imageUrl = $"https://j1250mdb-7177.inc1.devtunnels.ms{p.imageUrl}"
+
+        })
                 .ToListAsync();
 
             return Ok(products);
