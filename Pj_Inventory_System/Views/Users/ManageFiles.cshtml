@@ -1,81 +1,376 @@
 ﻿@model UserFile
+
 @{
     ViewData["Title"] = "User Files";
     var files = ViewBag.Files as IEnumerable<UserFile>;
 }
 
-<h1>Create File User</h1>
+<style>
+    .user-files-page {
+        max-width: 960px;
+        margin: 0 auto;
+        color: #17263a;
+    }
 
-<div class="container">
+    .user-files-page .page-header {
+        margin-bottom: 24px;
+    }
 
-    <h4>User: @ViewBag.UserName</h4>
+    .user-files-page .page-title {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-    <form method="post" asp-action="ManageFiles" enctype="multipart/form-data">
+    .user-files-page .user-heading {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        color: #62738a;
+        font-size: 14px;
+    }
 
-        <div class="form-group">
+    .user-files-page .user-name {
+        color: #24364d;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
 
-            <label class="control-label">Name</label>
-            <input asp-for="Name" class="form-control" />
+    .user-files-page .files-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
 
-            <!-- هذا يبقى كما هو لأنه المفتاح الحقيقي في جدول UserFiles -->
-            <input asp-for="UserID" hidden />
+    .user-files-page .files-card + .files-card {
+        margin-top: 24px;
+    }
 
+    .user-files-page .card-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .user-files-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
+
+    .user-files-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .user-files-page .upload-form {
+        margin: 0;
+    }
+
+    .user-files-page .upload-body {
+        padding: 28px 24px;
+    }
+
+    .user-files-page .field-group + .field-group {
+        margin-top: 24px;
+    }
+
+    .user-files-page .form-label {
+        margin-bottom: 10px;
+        color: #24364d;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .user-files-page .form-control {
+        min-height: 48px;
+        padding: 12px 14px;
+        border: 1px solid #d6dfeb;
+        border-radius: 10px;
+        background: #fbfcfe;
+        color: #17263a;
+        font-size: 15px;
+    }
+
+    .user-files-page .form-control:focus {
+        border-color: #278575;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(39, 133, 117, .12);
+    }
+
+    .user-files-page .form-control.input-validation-error {
+        border-color: #b6384c;
+    }
+
+    .user-files-page .form-control[type="file"] {
+        padding: 10px 14px;
+    }
+
+    .user-files-page .form-control[type="file"]::file-selector-button {
+        margin: -10px 14px -10px -14px;
+        padding: 12px 14px;
+        border: 0;
+        border-right: 1px solid #d6dfeb;
+        background: #eef4fb;
+        color: #285681;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .user-files-page .form-control[type="file"]:hover::file-selector-button {
+        background: #dfebf8;
+    }
+
+    .user-files-page .card-actions {
+        display: flex;
+        justify-content: flex-end;
+        padding: 18px 24px;
+        border-top: 1px solid #e6ecf3;
+        background: #f8fafc;
+    }
+
+    .user-files-page .create-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 140px;
+        min-height: 44px;
+        padding: 10px 20px;
+        border: 1px solid #7ce3d0;
+        border-radius: 10px;
+        background: #7ce3d0;
+        color: #123a36;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .user-files-page .create-button:hover,
+    .user-files-page .create-button:active {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .user-files-page .files-table {
+        min-width: 500px;
+        margin: 0;
+        color: #17263a;
+        vertical-align: middle;
+    }
+
+    .user-files-page .files-table > thead > tr > th {
+        padding: 14px 24px;
+        border-bottom: 1px solid #e6ecf3;
+        background: #f8fafc;
+        color: #52647c;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+    }
+
+    .user-files-page .files-table > tbody > tr > td {
+        padding: 18px 24px;
+        border-bottom: 1px solid #edf1f6;
+        background: #fff;
+        font-size: 14px;
+    }
+
+    .user-files-page .files-table > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+
+    .user-files-page .files-table > tbody > tr:hover > td {
+        background: #f7fbfa;
+    }
+
+    .user-files-page .number-cell {
+        width: 80px;
+        color: #62738a;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .user-files-page .file-name {
+        max-width: 420px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .user-files-page .file-column {
+        text-align: right;
+    }
+
+    .user-files-page .view-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid #c8e8df;
+        border-radius: 8px;
+        background: #e5f7f2;
+        color: #226a5c;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .user-files-page .view-button:hover,
+    .user-files-page .view-button:active {
+        border-color: #a6d7ca;
+        background: #d4efe6;
+        color: #195345;
+    }
+
+    .user-files-page .btn:focus-visible,
+    .user-files-page .table-responsive:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .user-files-page .card-heading,
+        .user-files-page .upload-body,
+        .user-files-page .card-actions {
+            padding: 20px;
+        }
+
+        .user-files-page .create-button {
+            width: 100%;
+        }
+
+        .user-files-page .files-table > thead > tr > th,
+        .user-files-page .files-table > tbody > tr > td {
+            padding: 14px 16px;
+        }
+    }
+</style>
+
+<div class="user-files-page">
+    <div class="page-header">
+        <h1 class="page-title">@ViewData["Title"]</h1>
+
+        <div class="user-heading">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span>User:</span>
+            <span class="user-name">@ViewBag.UserName</span>
+        </div>
+    </div>
+
+    <section class="files-card" aria-labelledby="create-file-title">
+        <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-file-arrow-up"></i>
+            </span>
+
+            <h2 class="section-title" id="create-file-title">
+                Create User File
+            </h2>
         </div>
 
-        <div class="form-group">
-            <label>Image</label>
-            <input type="file" name="fileUser" class="form-control" />
+        <form method="post"
+              asp-action="ManageFiles"
+              enctype="multipart/form-data"
+              class="upload-form">
+
+            <div class="upload-body">
+                <div class="field-group">
+                    <label asp-for="Name" class="form-label">
+                        Name
+                    </label>
+
+                    <input asp-for="Name" class="form-control" />
+
+                    <input asp-for="UserID" hidden />
+                </div>
+
+                <div class="field-group">
+                    <label for="fileUser" class="form-label">
+                        Image
+                    </label>
+
+                    <input type="file"
+                           id="fileUser"
+                           name="fileUser"
+                           class="form-control" />
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button type="submit" class="btn create-button">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    Create
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <section class="files-card" aria-labelledby="files-table-title">
+        <div class="card-heading">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-folder-open"></i>
+            </span>
+
+            <h2 class="section-title" id="files-table-title">
+                List Files
+            </h2>
         </div>
 
-        <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
+        <div class="table-responsive"
+             role="region"
+             aria-labelledby="files-table-title"
+             tabindex="0">
+            <table class="table files-table"
+                   aria-labelledby="files-table-title">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col" class="file-column">File</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{
+                        int count = 1;
+                    }
+
+                    @foreach (var file in files)
+                    {
+                        <tr>
+                            <td class="number-cell">@count</td>
+                            <td class="file-name">@file.Name</td>
+
+                            <td class="file-column">
+                                <a href="@file.FileURL"
+                                   target="_blank"
+                                   class="btn view-button">
+                                    <i class="fas fa-arrow-up-right-from-square"
+                                       aria-hidden="true"></i>
+                                    View File
+                                </a>
+                            </td>
+                        </tr>
+
+                        count++;
+                    }
+                </tbody>
+            </table>
         </div>
-
-    </form>
-
-    <hr />
-
-    <h3>List Files</h3>
-
-    <table class="table table-striped">
-
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>File</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            @{
-                int count = 1;
-            }
-
-            @foreach (var file in files)
-            {
-                <tr>
-
-                    <td>@count</td>
-
-                    <td>@file.Name</td>
-
-                    <td>
-                        <a href="@file.FileURL"
-                           target="_blank"
-                           class="btn btn-info">
-                            View File
-                        </a>
-                    </td>
-
-                </tr>
-
-                count++;
-            }
-
-        </tbody>
-
-    </table>
-
+    </section>
 </div>

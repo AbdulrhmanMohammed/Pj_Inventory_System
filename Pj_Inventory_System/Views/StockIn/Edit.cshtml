@@ -1,22 +1,221 @@
 ﻿@model Pj_Inventory_System.Application.Dtos.StockInDtos.UpdateStockInDto
 
-<form method="post" asp-action="Edit">
+<style>
+    .stock-in-edit-page {
+        max-width: 760px;
+        margin: 0 auto;
+        color: #17263a;
+    }
 
-    <!-- مهم جداً: نرسل الـ UID -->
-    <input type="hidden" asp-for="UID" />
+    .stock-in-edit-page .page-header {
+        margin-bottom: 24px;
+    }
 
-    <!-- مهم جداً: نرسل الـ StockInID -->
-    <input type="hidden" asp-for="StockInID" />
+    .stock-in-edit-page .page-title {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-    <label>Product</label>
-    <select asp-for="ProductID" class="form-control" asp-items="ViewBag.Products"></select>
+    .stock-in-edit-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-    <label>Quantity</label>
-    <input asp-for="Quantity" class="form-control" />
+    .stock-in-edit-page .edit-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
 
-    <label>Date In</label>
-    <input asp-for="DateIn" type="date" class="form-control" />
+    .stock-in-edit-page .edit-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
 
-    <button type="submit" class="btn btn-primary mt-3">Save</button>
+    .stock-in-edit-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
 
-</form>
+    .stock-in-edit-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .stock-in-edit-page .edit-form {
+        margin: 0;
+    }
+
+    .stock-in-edit-page .edit-card-body {
+        padding: 28px 24px;
+    }
+
+    .stock-in-edit-page .field-group + .field-group {
+        margin-top: 24px;
+    }
+
+    .stock-in-edit-page .form-label {
+        margin-bottom: 10px;
+        color: #24364d;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .stock-in-edit-page .form-control,
+    .stock-in-edit-page .form-select {
+        min-height: 48px;
+        border: 1px solid #d6dfeb;
+        border-radius: 10px;
+        background-color: #fbfcfe;
+        color: #17263a;
+        font-size: 15px;
+    }
+
+    .stock-in-edit-page .form-control {
+        padding: 12px 14px;
+    }
+
+    .stock-in-edit-page .form-select {
+        padding: 12px 40px 12px 14px;
+    }
+
+    .stock-in-edit-page .form-control:focus,
+    .stock-in-edit-page .form-select:focus {
+        border-color: #278575;
+        background-color: #fff;
+        box-shadow: 0 0 0 4px rgba(39, 133, 117, .12);
+    }
+
+    .stock-in-edit-page .input-validation-error {
+        border-color: #b6384c;
+    }
+
+    .stock-in-edit-page .edit-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 18px 24px;
+        border-top: 1px solid #e6ecf3;
+        background: #f8fafc;
+    }
+
+    .stock-in-edit-page .save-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 140px;
+        min-height: 44px;
+        padding: 10px 20px;
+        border: 1px solid #7ce3d0;
+        border-radius: 10px;
+        background: #7ce3d0;
+        color: #123a36;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .stock-in-edit-page .save-button:hover,
+    .stock-in-edit-page .save-button:active {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .stock-in-edit-page .save-button:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .stock-in-edit-page .edit-card-header,
+        .stock-in-edit-page .edit-card-body,
+        .stock-in-edit-page .edit-card-footer {
+            padding: 20px;
+        }
+
+        .stock-in-edit-page .save-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="stock-in-edit-page">
+    <div class="page-header">
+        <h1 class="page-title">Edit Stock In</h1>
+        <p class="page-description">
+            Update the product, quantity, and date for this stock entry.
+        </p>
+    </div>
+
+    <div class="edit-card">
+        <div class="edit-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-arrow-down"></i>
+            </span>
+
+            <h2 class="section-title">Stock In Details</h2>
+        </div>
+
+        <form method="post" asp-action="Edit" class="edit-form">
+
+            <input type="hidden" asp-for="UID" />
+            <input type="hidden" asp-for="StockInID" />
+
+            <div class="edit-card-body">
+                <div class="field-group">
+                    <label asp-for="ProductID" class="form-label">
+                        Product
+                    </label>
+
+                    <select asp-for="ProductID"
+                            class="form-select"
+                            asp-items="ViewBag.Products">
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label asp-for="Quantity" class="form-label">
+                        Quantity
+                    </label>
+
+                    <input asp-for="Quantity" class="form-control" />
+                </div>
+
+                <div class="field-group">
+                    <label asp-for="DateIn" class="form-label">
+                        Date In
+                    </label>
+
+                    <input asp-for="DateIn"
+                           type="date"
+                           class="form-control" />
+                </div>
+            </div>
+
+            <div class="edit-card-footer">
+                <button type="submit" class="btn save-button">
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                    Save
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>

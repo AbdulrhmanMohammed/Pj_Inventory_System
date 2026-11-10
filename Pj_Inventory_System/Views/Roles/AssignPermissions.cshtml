@@ -7,68 +7,304 @@
     var assignedPermissions = ViewBag.AssignedPermissions as List<int>;
 }
 
+<style>
+    .assign-permissions-page {
+        max-width: 900px;
+        margin: 0 auto;
+        color: #17263a;
+    }
 
-<div class="container mt-4">
+    .assign-permissions-page .page-header {
+        margin-bottom: 24px;
+    }
 
-    <h2>Assign Permissions</h2>
+    .assign-permissions-page .page-title {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-    <div class="card mt-3">
+    .assign-permissions-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-        <div class="card-header">
-            Role:
-            <strong>@Model.Name</strong>
-        </div>
+    .assign-permissions-page .permissions-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
 
-        <div class="card-body">
+    .assign-permissions-page .permissions-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
 
-            <form asp-action="AssignPermissions" method="post">
+    .assign-permissions-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
 
-                <!-- Role Id -->
-                <input type="hidden"
-                       name="roleId"
-                       value="@Model.Id" />
+    .assign-permissions-page .role-label {
+        margin-bottom: 4px;
+        color: #62738a;
+        font-size: 12px;
+    }
 
+    .assign-permissions-page .role-name {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
 
-                @foreach (var permission in allPermissions)
-                {
-                    <div class="form-check mb-2">
+    .assign-permissions-page .role-heading {
+        min-width: 0;
+    }
 
-                        <input class="form-check-input"
-                               type="checkbox"
-                               name="permissionIds"
-                               value="@permission.Id"
-                               id="permission_@permission.Id"
-                               checked="@(assignedPermissions.Contains(permission.Id))" />
+    .assign-permissions-page .permissions-form {
+        margin: 0;
+    }
 
-                        <label class="form-check-label"
-                               for="permission_@permission.Id">
+    .assign-permissions-page .permissions-card-body {
+        padding: 28px 24px;
+    }
 
-                            @permission.Name
+    .assign-permissions-page .permissions-fieldset {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
 
-                        </label>
+    .assign-permissions-page .permissions-legend {
+        float: none;
+        width: auto;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 600;
+    }
 
-                    </div>
-                }
+    .assign-permissions-page .permissions-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
 
+    .assign-permissions-page .permission-option {
+        position: relative;
+        min-width: 0;
+    }
 
-                <div class="mt-4">
+    .assign-permissions-page .permission-checkbox {
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        left: 16px;
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        transform: translateY(-50%);
+        border-color: #a9bbce;
+        cursor: pointer;
+    }
 
-                    <button type="submit"
-                            class="btn btn-primary">
-                        Save Permissions
-                    </button>
+    .assign-permissions-page .permission-label {
+        display: flex;
+        align-items: center;
+        min-height: 62px;
+        height: 100%;
+        padding: 16px 16px 16px 48px;
+        border: 1px solid #dde5ef;
+        border-radius: 10px;
+        background: #fbfcfe;
+        color: #42566f;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        cursor: pointer;
+    }
 
-                    <a asp-action="Index"
-                       class="btn btn-secondary">
-                        Back
-                    </a>
+    .assign-permissions-page .permission-label:hover {
+        border-color: #a6d7ca;
+        background: #f3faf7;
+    }
 
-                </div>
+    .assign-permissions-page .permission-checkbox:checked {
+        border-color: #278575;
+        background-color: #278575;
+    }
 
-            </form>
+    .assign-permissions-page .permission-checkbox:checked + .permission-label {
+        border-color: #a6d7ca;
+        background: #e5f7f2;
+        color: #195345;
+        font-weight: 600;
+    }
 
-        </div>
+    .assign-permissions-page .permission-checkbox:focus {
+        border-color: #278575;
+        box-shadow: 0 0 0 4px rgba(39, 133, 117, .12);
+    }
 
+    .assign-permissions-page .permission-checkbox:focus-visible + .permission-label {
+        outline: 2px solid #278575;
+        outline-offset: 2px;
+    }
+
+    .assign-permissions-page .permissions-card-footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 18px 24px;
+        border-top: 1px solid #e6ecf3;
+        background: #f8fafc;
+    }
+
+    .assign-permissions-page .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 20px;
+        border: 1px solid;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .assign-permissions-page .save-button {
+        border-color: #7ce3d0;
+        background: #7ce3d0;
+        color: #123a36;
+    }
+
+    .assign-permissions-page .save-button:hover,
+    .assign-permissions-page .save-button:active {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .assign-permissions-page .back-button {
+        border-color: #d6e1ef;
+        background: #fff;
+        color: #42566f;
+    }
+
+    .assign-permissions-page .back-button:hover,
+    .assign-permissions-page .back-button:active {
+        border-color: #bccbdd;
+        background: #eef4fb;
+        color: #24364d;
+    }
+
+    .assign-permissions-page .action-button:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .assign-permissions-page .permissions-card-header,
+        .assign-permissions-page .permissions-card-body,
+        .assign-permissions-page .permissions-card-footer {
+            padding: 20px;
+        }
+
+        .assign-permissions-page .permissions-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .assign-permissions-page .action-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="assign-permissions-page">
+    <div class="page-header">
+        <h1 class="page-title">@ViewData["Title"]</h1>
+        <p class="page-description">
+            Select the permissions to assign to this role.
+        </p>
     </div>
 
+    <div class="permissions-card">
+        <div class="permissions-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-user-shield"></i>
+            </span>
+
+            <div class="role-heading">
+                <div class="role-label">Role</div>
+                <h2 class="role-name">@Model.Name</h2>
+            </div>
+        </div>
+
+        <form asp-action="AssignPermissions"
+              method="post"
+              class="permissions-form">
+
+            <input type="hidden"
+                   name="roleId"
+                   value="@Model.Id" />
+
+            <div class="permissions-card-body">
+                <fieldset class="permissions-fieldset">
+                    <legend class="permissions-legend">
+                        Available Permissions
+                    </legend>
+
+                    <div class="permissions-grid">
+                        @foreach (var permission in allPermissions)
+                        {
+                            <div class="permission-option">
+                                <input class="form-check-input permission-checkbox"
+                                       type="checkbox"
+                                       name="permissionIds"
+                                       value="@permission.Id"
+                                       id="permission_@permission.Id"
+                                       checked="@(assignedPermissions.Contains(permission.Id))" />
+
+                                <label class="permission-label"
+                                       for="permission_@permission.Id">
+                                    @permission.Name
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="permissions-card-footer">
+                <button type="submit" class="btn action-button save-button">
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                    Save Permissions
+                </button>
+
+                <a asp-action="Index" class="btn action-button back-button">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    Back
+                </a>
+            </div>
+        </form>
+    </div>
 </div>

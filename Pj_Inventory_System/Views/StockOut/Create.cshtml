@@ -1,16 +1,216 @@
 ﻿@model Pj_Inventory_System.Application.Dtos.StockOutDtos.CreateStockOutDto
 
-<form method="post" asp-action="Create">
+<style>
+    .stock-out-create-page {
+        max-width: 760px;
+        margin: 0 auto;
+        color: #17263a;
+    }
 
-    <label>Product</label>
-    <select asp-for="ProductID" class="form-control" asp-items="ViewBag.Products"></select>
+    .stock-out-create-page .page-header {
+        margin-bottom: 24px;
+    }
 
-    <label>Quantity</label>
-    <input asp-for="Quantity" class="form-control" />
+    .stock-out-create-page .page-title {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-    <label>Date Out</label>
-    <input asp-for="DateOut" type="date" class="form-control" />
+    .stock-out-create-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-    <button type="submit" class="btn btn-primary mt-3">Create</button>
+    .stock-out-create-page .create-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
 
-</form>
+    .stock-out-create-page .create-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .stock-out-create-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #fff5e5;
+        color: #8a5716;
+    }
+
+    .stock-out-create-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .stock-out-create-page .create-form {
+        margin: 0;
+    }
+
+    .stock-out-create-page .create-card-body {
+        padding: 28px 24px;
+    }
+
+    .stock-out-create-page .field-group + .field-group {
+        margin-top: 24px;
+    }
+
+    .stock-out-create-page .form-label {
+        margin-bottom: 10px;
+        color: #24364d;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .stock-out-create-page .form-control,
+    .stock-out-create-page .form-select {
+        min-height: 48px;
+        border: 1px solid #d6dfeb;
+        border-radius: 10px;
+        background-color: #fbfcfe;
+        color: #17263a;
+        font-size: 15px;
+    }
+
+    .stock-out-create-page .form-control {
+        padding: 12px 14px;
+    }
+
+    .stock-out-create-page .form-select {
+        padding: 12px 40px 12px 14px;
+    }
+
+    .stock-out-create-page .form-control:focus,
+    .stock-out-create-page .form-select:focus {
+        border-color: #278575;
+        background-color: #fff;
+        box-shadow: 0 0 0 4px rgba(39, 133, 117, .12);
+    }
+
+    .stock-out-create-page .input-validation-error {
+        border-color: #b6384c;
+    }
+
+    .stock-out-create-page .create-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 18px 24px;
+        border-top: 1px solid #e6ecf3;
+        background: #f8fafc;
+    }
+
+    .stock-out-create-page .create-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 140px;
+        min-height: 44px;
+        padding: 10px 20px;
+        border: 1px solid #7ce3d0;
+        border-radius: 10px;
+        background: #7ce3d0;
+        color: #123a36;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .stock-out-create-page .create-button:hover,
+    .stock-out-create-page .create-button:active {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .stock-out-create-page .create-button:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .stock-out-create-page .create-card-header,
+        .stock-out-create-page .create-card-body,
+        .stock-out-create-page .create-card-footer {
+            padding: 20px;
+        }
+
+        .stock-out-create-page .create-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="stock-out-create-page">
+    <div class="page-header">
+        <h1 class="page-title">Add Stock Out</h1>
+        <p class="page-description">
+            Enter the product, quantity, and date for the outgoing stock.
+        </p>
+    </div>
+
+    <div class="create-card">
+        <div class="create-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-arrow-up"></i>
+            </span>
+
+            <h2 class="section-title">Stock Out Details</h2>
+        </div>
+
+        <form method="post" asp-action="Create" class="create-form">
+            <div class="create-card-body">
+                <div class="field-group">
+                    <label asp-for="ProductID" class="form-label">
+                        Product
+                    </label>
+
+                    <select asp-for="ProductID"
+                            class="form-select"
+                            asp-items="ViewBag.Products">
+                    </select>
+                </div>
+
+                <div class="field-group">
+                    <label asp-for="Quantity" class="form-label">
+                        Quantity
+                    </label>
+
+                    <input asp-for="Quantity" class="form-control" />
+                </div>
+
+                <div class="field-group">
+                    <label asp-for="DateOut" class="form-label">
+                        Date Out
+                    </label>
+
+                    <input asp-for="DateOut"
+                           type="date"
+                           class="form-control" />
+                </div>
+            </div>
+
+            <div class="create-card-footer">
+                <button type="submit" class="btn create-button">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                    Create
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

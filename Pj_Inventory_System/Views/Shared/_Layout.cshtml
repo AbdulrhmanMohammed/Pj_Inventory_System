@@ -8,21 +8,191 @@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="~/tempboot/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <style>
+            .inventory-layout {
+                --inventory-ink: #17263a;
+                --inventory-muted: #516279;
+                --inventory-canvas: #f4f7fb;
+                --inventory-line: #dde5ef;
+                --inventory-sidebar: #111e30;
+                --inventory-accent: #7ce3d0;
+                background: var(--inventory-canvas);
+            }
+
+            .inventory-layout .inventory-topbar {
+                background: #142338;
+                box-shadow: inset 0 -1px rgba(255, 255, 255, .1);
+            }
+
+            .inventory-layout .navbar-brand {
+                display: flex;
+                align-items: center;
+                gap: .625rem;
+                color: #fff;
+                font-size: .9375rem;
+                font-weight: 700;
+                letter-spacing: -.015em;
+            }
+
+            .inventory-layout .inventory-brand-mark {
+                display: grid;
+                width: 2rem;
+                height: 2rem;
+                flex: 0 0 2rem;
+                place-items: center;
+                border-radius: .625rem;
+                background: var(--inventory-accent);
+                color: #123a36;
+            }
+
+            .inventory-layout #sidebarToggle,
+            .inventory-layout #navbarDropdown {
+                border-radius: .5rem;
+                color: #e0e9f4;
+            }
+
+            .inventory-layout #sidebarToggle {
+                width: 2.25rem;
+                height: 2.25rem;
+            }
+
+            .inventory-layout #sidebarToggle:hover,
+            .inventory-layout #navbarDropdown:hover,
+            .inventory-layout #navbarDropdown[aria-expanded="true"] {
+                background: #263a53;
+                color: #fff;
+            }
+
+            .inventory-layout .inventory-topbar .dropdown-menu {
+                padding: .375rem;
+                border: 1px solid var(--inventory-line);
+                border-radius: .75rem;
+                box-shadow: 0 10px 28px rgba(20, 35, 56, .16);
+            }
+
+            .inventory-layout .inventory-topbar .dropdown-item {
+                padding: .5rem .75rem;
+                border-radius: .375rem;
+            }
+
+            .inventory-layout .inventory-sidebar {
+                background: var(--inventory-sidebar);
+            }
+
+            .inventory-layout .inventory-sidebar .sb-sidenav-menu {
+                padding: .25rem .75rem 1rem;
+            }
+
+            .inventory-layout .inventory-sidebar .sb-sidenav-menu-heading {
+                padding: 1.25rem .625rem .5rem;
+                color: #a4b5cb;
+                font-size: .6875rem;
+                letter-spacing: .11em;
+            }
+
+            .inventory-layout .inventory-sidebar .nav-link {
+                min-height: 2.5rem;
+                margin-bottom: .1875rem;
+                padding: .5rem .625rem;
+                border-radius: .5rem;
+                color: #e2eaf5;
+                font-size: .875rem;
+                font-weight: 500;
+            }
+
+            .inventory-layout .inventory-sidebar .sb-nav-link-icon {
+                width: 1.25rem;
+                margin-right: .625rem;
+                color: var(--inventory-accent);
+                text-align: center;
+            }
+
+            .inventory-layout .inventory-sidebar .nav-link:hover,
+            .inventory-layout .inventory-sidebar .nav-link:focus-visible {
+                background: #22364e;
+                color: #fff;
+            }
+
+            .inventory-layout .inventory-sidebar .sb-sidenav-footer {
+                display: flex;
+                align-items: center;
+                gap: .625rem;
+                padding: .875rem 1rem;
+                border-top: 1px solid #293b52;
+                background: #16263a;
+                color: #fff;
+                font-size: .875rem;
+            }
+
+            .inventory-layout .inventory-account-icon {
+                display: grid;
+                width: 2.125rem;
+                height: 2.125rem;
+                flex: 0 0 2.125rem;
+                place-items: center;
+                border-radius: .625rem;
+                background: #253b52;
+                color: var(--inventory-accent);
+            }
+
+            .inventory-layout .inventory-sidebar .sb-sidenav-footer .small {
+                color: #b5c5d9;
+            }
+
+            .inventory-layout .inventory-main {
+                padding-block: clamp(1rem, 2vw, 1.75rem);
+                background: var(--inventory-canvas);
+            }
+
+            .inventory-layout .inventory-footer {
+                padding-block: 1rem;
+                border-top: 1px solid var(--inventory-line);
+                background: #fff;
+                color: var(--inventory-muted);
+            }
+
+            .inventory-layout .inventory-footer a {
+                color: #25587d;
+                text-decoration: underline;
+                text-underline-offset: .16em;
+            }
+
+            .inventory-layout .inventory-topbar :focus-visible,
+            .inventory-layout .inventory-sidebar :focus-visible,
+            .inventory-layout .inventory-footer :focus-visible {
+                outline: 2px solid #4e92e6;
+                outline-offset: 2px;
+            }
+
+            @@media (max-width: 575.98px) {
+                .inventory-layout .navbar-brand {
+                    width: auto;
+                    margin-right: .5rem;
+                }
+
+                .inventory-layout #sidebarToggle {
+                    flex: 0 0 2.25rem;
+                }
+            }
+    </style>
 </head>
 
-<body class="sb-nav-fixed">
+<body class="sb-nav-fixed inventory-layout">
 
     <!-- Navbar -->
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand ps-3" asp-controller="Home" asp-action="Index">Inventory System</a>
+    <nav class="sb-topnav navbar navbar-expand navbar-dark inventory-topbar">
+        <a class="navbar-brand ps-3" asp-controller="Home" asp-action="Index">
+            <span class="inventory-brand-mark" aria-hidden="true"><i class="fas fa-cubes"></i></span>
+            <span>Inventory System</span>
+        </a>
 
-        <button class="btn btn-link btn-sm me-4" id="sidebarToggle">
+        <button class="btn btn-link btn-sm me-2 me-sm-4" id="sidebarToggle" type="button" aria-label="Toggle sidebar" aria-controls="layoutSidenav_nav">
             <i class="fas fa-bars"></i>
         </button>
 
         <ul class="navbar-nav ms-auto me-3 me-lg-4">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" data-bs-toggle="dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" data-bs-toggle="dropdown" aria-label="Account menu" aria-expanded="false">
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -39,7 +209,7 @@
 
         <!-- Sidebar -->
         <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion sb-sidenav-dark">
+            <nav class="sb-sidenav accordion sb-sidenav-dark inventory-sidebar">
 
                 <div class="sb-sidenav-menu">
                     <div class="nav">
@@ -86,7 +256,7 @@
                         </a>
 
                         <a class="nav-link" asp-controller="Orders" asp-action="Index">
-                            <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fas fa-clipboard-list"></i></div>
                             Orders
                         </a>
 
@@ -104,8 +274,11 @@
                 </div>
 
                 <div class="sb-sidenav-footer">
-                    <div class="small">Logged in as:</div>
-                    Admin
+                    <span class="inventory-account-icon" aria-hidden="true"><i class="fas fa-user"></i></span>
+                    <div>
+                        <div class="small">Logged in as:</div>
+                        <span class="fw-semibold">Admin</span>
+                    </div>
                 </div>
 
             </nav>
@@ -113,15 +286,15 @@
 
         <!-- Main Content -->
         <div id="layoutSidenav_content">
-            <main>
-                <div class="container-fluid px-4">
+            <main class="inventory-main">
+                <div class="container-fluid px-3 px-lg-4">
                     @RenderBody()
                 </div>
             </main>
 
-            <footer class="py-4 bg-light mt-auto">
-                <div class="container-fluid px-4 d-flex justify-content-between small">
-                    <div class="text-muted">© Inventory System 2026</div>
+            <footer class="inventory-footer mt-auto">
+                <div class="container-fluid px-3 px-lg-4 d-flex flex-wrap align-items-center justify-content-between gap-2 small">
+                    <div>© Inventory System 2026</div>
                     <div>
                         <a href="#">Privacy Policy</a> &middot;
                         <a href="#">Terms & Conditions</a>

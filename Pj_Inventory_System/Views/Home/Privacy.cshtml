@@ -1,6 +1,99 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<style>
+    .privacy-page {
+        max-width: 900px;
+        margin: 0 auto;
+        color: #17263a;
+    }
+
+    .privacy-page .page-header {
+        margin-bottom: 24px;
+    }
+
+    .privacy-page .page-title {
+        margin: 0;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+        line-height: 1.3;
+    }
+
+    .privacy-page .privacy-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
+
+    .privacy-page .privacy-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .privacy-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
+
+    .privacy-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .privacy-page .privacy-card-body {
+        padding: 28px 24px;
+    }
+
+    .privacy-page .privacy-text {
+        margin: 0;
+        color: #52647c;
+        font-size: 15px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+    }
+
+    @@media (max-width: 575.98px) {
+        .privacy-page .privacy-card-header,
+        .privacy-page .privacy-card-body {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="privacy-page">
+    <div class="page-header">
+        <h1 class="page-title">@ViewData["Title"]</h1>
+    </div>
+
+    <section class="privacy-card" aria-labelledby="privacy-section-title">
+        <div class="privacy-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-shield-halved"></i>
+            </span>
+
+            <h2 class="section-title" id="privacy-section-title">
+                Privacy Information
+            </h2>
+        </div>
+
+        <div class="privacy-card-body">
+            <p class="privacy-text">
+                Use this page to detail your site's privacy policy.
+            </p>
+        </div>
+    </section>
+</div>

@@ -2,7 +2,205 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    .home-page {
+        color: #17263a;
+    }
+
+    .home-page .welcome-card {
+        position: relative;
+        overflow: hidden;
+        padding: clamp(28px, 5vw, 64px);
+        border: 1px solid #263a53;
+        border-radius: 20px;
+        background:
+            radial-gradient(ellipse at top right, #24534f, transparent 65%),
+            #142338;
+        color: #fff;
+        box-shadow: 0 12px 36px rgba(20, 35, 56, .1);
+    }
+
+    .home-page .welcome-content {
+        position: relative;
+        max-width: 580px;
+    }
+
+    .home-page .brand-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 28px;
+        padding: 8px 12px;
+        border: 1px solid #45665f;
+        border-radius: 8px;
+        background: #203d3d;
+        color: #a6f0df;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .04em;
+    }
+
+    .home-page .welcome-title {
+        margin: 0 0 16px;
+        font-size: clamp(36px, 6vw, 56px);
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -1.5px;
+    }
+
+    .home-page .welcome-description {
+        margin: 0;
+        color: #c4d2e3;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+    .home-page .welcome-hint {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid #3c535f;
+        color: #d9e5ef;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .home-page .welcome-hint-icon {
+        flex-shrink: 0;
+        padding-top: 3px;
+        color: #7ce3d0;
+    }
+
+    .home-page .resource-card {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 24px;
+        padding: 24px;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
+
+    .home-page .resource-icon {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        flex-shrink: 0;
+        border-radius: 12px;
+        background: #e5f7f2;
+        color: #226a5c;
+        font-size: 22px;
+    }
+
+    .home-page .resource-content {
+        flex: 1 1 220px;
+        min-width: 0;
+    }
+
+    .home-page .resource-title {
+        margin: 0 0 6px;
+        font-size: 16px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .home-page .resource-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .home-page .resource-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 16px;
+        border: 1px solid #d6e1ef;
+        border-radius: 10px;
+        background: #eef4fb;
+        color: #285681;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .home-page .resource-link:hover {
+        border-color: #b9cee5;
+        background: #dfebf8;
+        color: #20476c;
+    }
+
+    .home-page .resource-link:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+    }
+
+    @@media (max-width: 575.98px) {
+        .home-page .resource-card {
+            padding: 20px;
+        }
+
+        .home-page .resource-link {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="home-page">
+    <section class="welcome-card" aria-labelledby="welcome-title">
+        <div class="welcome-content">
+            <div class="brand-label">
+                <i class="fas fa-cubes" aria-hidden="true"></i>
+                Inventory System
+            </div>
+
+            <h1 class="welcome-title" id="welcome-title">
+                Welcome
+            </h1>
+
+            <p class="welcome-description">
+                Your workspace for managing products, organizing categories,
+                and keeping track of stock.
+            </p>
+
+            <div class="welcome-hint">
+                <span class="welcome-hint-icon" aria-hidden="true">
+                    <i class="fas fa-compass"></i>
+                </span>
+                <span>
+                    Select a section from the sidebar to get started.
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <section class="resource-card" aria-labelledby="resource-title">
+        <span class="resource-icon" aria-hidden="true">
+            <i class="fab fa-github"></i>
+        </span>
+
+        <div class="resource-content">
+            <h2 class="resource-title" id="resource-title">
+                Inventory System on GitHub
+            </h2>
+            <p class="resource-description">
+                Explore the project source code on GitHub.
+            </p>
+        </div>
+
+        <a href="https://github.com/AbdulrhmanMohammed/Pj_Inventory_System"
+           class="resource-link">
+            View Source Code
+            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </a>
+    </section>
 </div>

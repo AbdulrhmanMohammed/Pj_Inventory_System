@@ -1,10 +1,10 @@
-﻿﻿@{
-ViewData["Title"] = "Login";
-Layout = null;
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = null;
 }
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,86 +13,241 @@ Layout = null;
 
     <link rel="stylesheet"
           href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <style>
+        body {
+            margin: 0;
+            background: #f4f7fb;
+            color: #17263a;
+        }
+
+        .login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 32px 16px;
+            background:
+                radial-gradient(ellipse at top left, #e0f4ef, transparent 55%),
+                #f4f7fb;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+            border: 1px solid #dde5ef;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 20px 60px rgba(20, 35, 56, .09);
+        }
+
+        .login-header {
+            padding: 32px;
+            background: #142338;
+            color: #fff;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .brand-icon {
+            display: grid;
+            place-items: center;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: #7ce3d0;
+            color: #123a36;
+        }
+
+        .login-header h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -.6px;
+        }
+
+        .login-header p {
+            margin: 0;
+            color: #bdcbdc;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .login-body {
+            padding: 32px;
+        }
+
+        .form-label {
+            margin-bottom: 8px;
+            color: #24364d;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            min-height: 48px;
+            padding: 12px 14px;
+            border: 1px solid #d6dfeb;
+            border-radius: 10px;
+            background: #fbfcfe;
+            color: #17263a;
+            font-size: 15px;
+        }
+
+        .form-control::placeholder {
+            color: #697b91;
+        }
+
+        .form-control:focus {
+            border-color: #278575;
+            background: #fff;
+            color: #17263a;
+            box-shadow: 0 0 0 4px rgba(39, 133, 117, .12);
+        }
+
+        .login-submit {
+            min-height: 48px;
+            width: 100%;
+            margin-top: 4px;
+            border: 1px solid #7ce3d0;
+            border-radius: 10px;
+            background: #7ce3d0;
+            color: #123a36;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .login-submit:hover,
+        .login-submit:active {
+            border-color: #65d3be;
+            background: #65d3be;
+            color: #123a36;
+        }
+
+        .login-submit:focus-visible {
+            outline: 3px solid #278575;
+            outline-offset: 3px;
+        }
+
+        .login-errors.validation-summary-valid {
+            display: none;
+        }
+
+        .login-errors.validation-summary-errors {
+            margin-bottom: 24px;
+            padding: 12px 16px;
+            border: 1px solid #f1c5cb;
+            border-radius: 10px;
+            background: #fff3f4;
+            color: #a32638;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .login-errors ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .login-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e6ecf3;
+            background: #fbfcfe;
+            color: #62738a;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        @@media (max-width: 575.98px) {
+            .login-header,
+            .login-body {
+                padding: 24px;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-light">
-
-    <div class="container">
-
-        <div class="row justify-content-center align-items-center min-vh-100">
-
-            <div class="col-md-5 col-lg-4">
-
-                <div class="card shadow">
-
-                    <div class="card-header text-center">
-                        <h3 class="mb-0">Login</h3>
-                    </div>
-
-                    <div class="card-body p-4">
-
-                        <form asp-controller="Accounts"
-                              asp-action="Login"
-                              method="post">
-
-                            <!-- Error Message -->
-                            <div asp-validation-summary="All"
-                                 class="text-danger mb-3">
-                            </div>
-
-                            <!-- Username -->
-                            <div class="mb-3">
-
-                                <label class="form-label">
-                                    Username
-                                </label>
-
-                                <input type="text"
-                                       name="username"
-                                       class="form-control"
-                                       placeholder="Enter username"
-                                       required />
-
-                            </div>
-
-                            <!-- Password -->
-                            <div class="mb-3">
-
-                                <label class="form-label">
-                                    Password
-                                </label>
-
-                                <input type="password"
-                                       name="password"
-                                       class="form-control"
-                                       placeholder="Enter password"
-                                       required />
-
-                            </div>
-
-                            <!-- Button -->
-                            <div class="d-grid">
-
-                                <button type="submit"
-                                        class="btn btn-primary">
-                                    Login
-                                </button>
-
-                            </div>
-
-                        </form>
-
-                    </div>
-
+<body>
+    <main class="login-page">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="brand">
+                    <span class="brand-icon" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor"
+                             stroke-width="1.7" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <path d="M12 3 3 7.5v9L12 21l9-4.5v-9L12 3Z" />
+                            <path d="m3 7.5 9 4.5 9-4.5M12 12v9M7.5 5.25l9 4.5" />
+                        </svg>
+                    </span>
+                    <span>Inventory System</span>
                 </div>
 
+                <h1>Welcome back</h1>
+                <p>Sign in to manage your inventory.</p>
             </div>
 
-        </div>
+            <div class="login-body">
+                <form asp-controller="Accounts"
+                      asp-action="Login"
+                      method="post">
 
-    </div>
+                    <div asp-validation-summary="All"
+                         class="login-errors"
+                         role="alert">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="username" class="form-label">
+                            Username
+                        </label>
+
+                        <input type="text"
+                               id="username"
+                               name="username"
+                               class="form-control"
+                               placeholder="Enter username"
+                               autocomplete="username"
+                               required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            Password
+                        </label>
+
+                        <input type="password"
+                               id="password"
+                               name="password"
+                               class="form-control"
+                               placeholder="Enter password"
+                               autocomplete="current-password"
+                               required />
+                    </div>
+
+                    <button type="submit" class="btn login-submit">
+                        Login
+                    </button>
+                </form>
+            </div>
+
+            <div class="login-footer">
+                &copy; Inventory System 2026
+            </div>
+        </div>
+    </main>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

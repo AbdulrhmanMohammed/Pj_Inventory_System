@@ -4,89 +4,514 @@
     ViewData["Title"] = "Products Page";
 }
 
-<div class="text-end mb-3">
-    <a asp-controller="Product" asp-action="Create" class="btn btn-primary">Create New Product</a>
+<style>
+    .products-page {
+        color: #17263a;
+    }
+
+    .products-page .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .products-page .page-title {
+        margin: 0 0 6px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
+
+    .products-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+    }
+
+    .products-page .create-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 1px solid #7ce3d0;
+        border-radius: 10px;
+        background: #7ce3d0;
+        color: #123a36;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .products-page .create-button:hover {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .products-page .table-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
+
+    .products-page .table-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .products-page .section-icon,
+    .product-image-modal .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
+
+    .products-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .products-page .products-table {
+        min-width: 1150px;
+        margin: 0;
+        color: #17263a;
+        vertical-align: middle;
+    }
+
+    .products-page .products-table > thead > tr > th {
+        padding: 14px 20px;
+        border-bottom: 1px solid #e6ecf3;
+        background: #f8fafc;
+        color: #52647c;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .products-page .products-table > tbody > tr > td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #edf1f6;
+        background: #fff;
+        font-size: 14px;
+    }
+
+    .products-page .products-table > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+
+    .products-page .products-table > tbody > tr:hover > td {
+        background: #f7fbfa;
+    }
+
+    .products-page .product-id {
+        color: #62738a;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .products-page .product-thumbnail {
+        display: block;
+        width: 70px;
+        height: 70px;
+        border: 1px solid #e1e8f1;
+        border-radius: 12px;
+        background: #f8fafc;
+        object-fit: cover;
+    }
+
+    .products-page .image-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 70px;
+        height: 70px;
+        border: 1px dashed #cbd6e4;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #62738a;
+        font-size: 10px;
+    }
+
+    .products-page .image-placeholder i,
+    .products-page .image-placeholder svg {
+        font-size: 18px;
+    }
+
+    .products-page .product-name {
+        min-width: 160px;
+        max-width: 280px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .products-page .description-cell {
+        min-width: 130px;
+        max-width: 220px;
+        color: #52647c;
+        overflow-wrap: anywhere;
+    }
+
+    .products-page .quantity-column {
+        text-align: center;
+    }
+
+    .products-page .quantity-badge {
+        display: inline-block;
+        min-width: 38px;
+        padding: 5px 10px;
+        border: 1px solid #e1e8f1;
+        border-radius: 8px;
+        background: #f1f5f9;
+        color: #42566f;
+        font-size: 12px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .products-page .price-column {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .products-page td.price-column {
+        font-weight: 700;
+    }
+
+    .products-page .actions-column {
+        text-align: right;
+    }
+
+    .products-page .row-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .products-page .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+
+    .products-page .edit-button {
+        border-color: #d6e1ef;
+        background: #eef4fb;
+        color: #285681;
+    }
+
+    .products-page .edit-button:hover {
+        border-color: #b9cee5;
+        background: #dfebf8;
+        color: #20476c;
+    }
+
+    .products-page .delete-button {
+        border-color: #f1d4d9;
+        background: #fff3f4;
+        color: #a32638;
+    }
+
+    .products-page .delete-button:hover {
+        border-color: #e7b4be;
+        background: #fbe3e7;
+        color: #8a2030;
+    }
+
+    .products-page .image-button {
+        border-color: #c8e8df;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
+
+    .products-page .image-button:hover {
+        border-color: #a6d7ca;
+        background: #d4efe6;
+        color: #195345;
+    }
+
+    .product-image-modal .modal-content {
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        color: #17263a;
+        box-shadow: 0 20px 60px rgba(20, 35, 56, .18);
+    }
+
+    .product-image-modal .modal-header {
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .product-image-modal .modal-title {
+        min-width: 0;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .product-image-modal .btn-close {
+        flex-shrink: 0;
+    }
+
+    .product-image-modal .modal-body {
+        padding: 24px;
+        text-align: center;
+    }
+
+    .product-image-modal .image-stage {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 220px;
+        padding: 16px;
+        border: 1px solid #e6ecf3;
+        border-radius: 12px;
+        background: #f8fafc;
+    }
+
+    .product-image-modal .preview-image {
+        display: block;
+        max-width: 100%;
+        max-height: 400px;
+        height: auto;
+        border-radius: 8px;
+        object-fit: contain;
+    }
+
+    .product-image-modal .empty-image {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        color: #62738a;
+    }
+
+    .product-image-modal .empty-image i,
+    .product-image-modal .empty-image svg {
+        font-size: 36px;
+        color: #8295ad;
+    }
+
+    .product-image-modal .empty-image p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .products-page .btn:focus-visible,
+    .products-page .table-responsive:focus-visible,
+    .product-image-modal .btn-close:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .products-page .create-button {
+            width: 100%;
+        }
+
+        .products-page .table-card-header,
+        .product-image-modal .modal-header,
+        .product-image-modal .modal-body {
+            padding: 16px;
+        }
+
+        .products-page .products-table > thead > tr > th,
+        .products-page .products-table > tbody > tr > td {
+            padding: 14px 16px;
+        }
+    }
+</style>
+
+<div class="products-page">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Products</h1>
+            <p class="page-description">
+                View and manage your products and stock.
+            </p>
+        </div>
+
+        <a asp-controller="Product"
+           asp-action="Create"
+           class="btn create-button">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            Create New Product
+        </a>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-box"></i>
+            </span>
+
+            <h2 class="section-title" id="products-table-title">
+                All Products
+            </h2>
+        </div>
+
+        <div class="table-responsive"
+             role="region"
+             aria-labelledby="products-table-title"
+             tabindex="0">
+            <table class="table products-table"
+                   aria-labelledby="products-table-title">
+                <thead>
+                    <tr>
+                        <th scope="col">Product ID</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Supplier</th>
+                        <th scope="col" class="quantity-column">Quantity in Stock</th>
+                        <th scope="col" class="price-column">Unit Price</th>
+                        <th scope="col" class="actions-column">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var product in Model)
+                    {
+                        <tr>
+                            <td class="product-id">@product.ProductID</td>
+
+                            <td>
+                                @if (!string.IsNullOrEmpty(product.imageUrl))
+                                {
+                                    <img src="@product.imageUrl"
+                                         alt="@product.ProductName"
+                                         class="product-thumbnail" />
+                                }
+                                else
+                                {
+                                    <span class="image-placeholder">
+                                        <i class="fas fa-image" aria-hidden="true"></i>
+                                        <span>No Image</span>
+                                    </span>
+                                }
+                            </td>
+
+                            <td class="product-name">@product.ProductName</td>
+                            <td class="description-cell">@product.CategoryName</td>
+                            <td class="description-cell">@product.SupplierName</td>
+
+                            <td class="quantity-column">
+                                <span class="quantity-badge">
+                                    @product.QuantityInStock
+                                </span>
+                            </td>
+
+                            <td class="price-column">@product.UnitPrice</td>
+
+                            <td>
+                                <div class="row-actions">
+                                    <a asp-action="Edit"
+                                       asp-route-uid="@product.UID"
+                                       class="btn action-button edit-button">
+                                        <i class="fas fa-pen" aria-hidden="true"></i>
+                                        Edit
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                       asp-route-uid="@product.UID"
+                                       class="btn action-button delete-button">
+                                        <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                        Delete
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn action-button image-button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#imgModal_@product.ProductID">
+                                        <i class="fas fa-image" aria-hidden="true"></i>
+                                        View Image
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<div class="container mt-2">
-    <table class="table table-primary table-hover">
-        <thead>
-            <tr>
-                <th>ProductID</th>
-                <th>Image</th>
-                <th>ProductName</th>
-                <th>Category</th>
-                <th>Supplier</th>
-                <th>QuantityInStock</th>
-                <th>UnitPrice</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.ProductID</td>
+@foreach (var product in Model)
+{
+    <div class="modal fade product-image-modal"
+         id="imgModal_@product.ProductID"
+         tabindex="-1"
+         aria-labelledby="imgModalTitle_@product.ProductID"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="section-icon" aria-hidden="true">
+                        <i class="fas fa-image"></i>
+                    </span>
 
-                    <!-- صورة صغيرة داخل الجدول -->
-                    <td>
+                    <h2 class="modal-title"
+                        id="imgModalTitle_@product.ProductID">
+                        @product.ProductName - Image
+                    </h2>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="image-stage">
                         @if (!string.IsNullOrEmpty(product.imageUrl))
                         {
                             <img src="@product.imageUrl"
-                                 style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px;" />
+                                 alt="@product.ProductName"
+                                 class="preview-image" />
                         }
                         else
                         {
-                            <span>No Image</span>
+                            <div class="empty-image">
+                                <i class="fas fa-image" aria-hidden="true"></i>
+                                <p>No Image Available</p>
+                            </div>
                         }
-                    </td>
-
-                    <td>@product.ProductName</td>
-                    <td>@product.CategoryName</td>
-                    <td>@product.SupplierName</td>
-                    <td>@product.QuantityInStock</td>
-                    <td>@product.UnitPrice</td>
-
-                    <td>
-                        <a asp-action="Edit" asp-route-uid="@product.UID" class="btn btn-primary">Edit</a>
-                        <a asp-action="Delete" asp-route-uid="@product.UID" class="btn btn-danger">Delete</a>
-
-                        <!-- زر عرض الصورة -->
-                        <button class="btn btn-info"
-                                data-bs-toggle="modal"
-                                data-bs-target="#imgModal_@product.ProductID">
-                            View Image
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-
-<!-- الـ Modal لعرض الصورة -->
-@foreach (var product in Model)
-{
-    <div class="modal fade" id="imgModal_@product.ProductID" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title">@product.ProductName - Image</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
                 </div>
-
-                <div class="modal-body text-center">
-                    @if (!string.IsNullOrEmpty(product.imageUrl))
-                    {
-                        <img src="@product.imageUrl" class="img-fluid rounded" style="max-height:400px;" />
-                    }
-                    else
-                    {
-                        <p>No Image Available</p>
-                    }
-                </div>
-
             </div>
         </div>
     </div>

@@ -4,46 +4,307 @@
     ViewData["Title"] = "Stock In Page";
 }
 
-<div class="text-end mb-3">
-    <a asp-action="Create" class="btn btn-primary">Add Stock In</a>
-</div>
+<style>
+    .stock-in-page {
+        color: #17263a;
+    }
 
-<div class="container mt-2">
-    <table class="table table-primary table-hover">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Date In</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+    .stock-in-page .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
 
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.StockInID</td>
-                    <td>@item.ProductName</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.DateIn.ToShortDateString()</td>
+    .stock-in-page .page-title {
+        margin: 0 0 6px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-                    <td>
-                        <a asp-action="Edit"
-                           asp-route-uid="@item.UID"
-                           class="btn btn-primary">
-                            Edit
-                        </a>
+    .stock-in-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-                        <a asp-action="Delete"
-                           asp-route-uid="@item.UID"
-                           class="btn btn-danger">
-                            Delete
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    .stock-in-page .create-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 1px solid #7ce3d0;
+        border-radius: 10px;
+        background: #7ce3d0;
+        color: #123a36;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .stock-in-page .create-button:hover,
+    .stock-in-page .create-button:active {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .stock-in-page .table-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
+
+    .stock-in-page .table-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .stock-in-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
+
+    .stock-in-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .stock-in-page .stock-table {
+        min-width: 720px;
+        margin: 0;
+        color: #17263a;
+        vertical-align: middle;
+    }
+
+    .stock-in-page .stock-table > thead > tr > th {
+        padding: 14px 24px;
+        border-bottom: 1px solid #e6ecf3;
+        background: #f8fafc;
+        color: #52647c;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .stock-in-page .stock-table > tbody > tr > td {
+        padding: 18px 24px;
+        border-bottom: 1px solid #edf1f6;
+        background: #fff;
+        font-size: 14px;
+    }
+
+    .stock-in-page .stock-table > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+
+    .stock-in-page .stock-table > tbody > tr:hover > td {
+        background: #f7fbfa;
+    }
+
+    .stock-in-page .record-id,
+    .stock-in-page .date-column {
+        color: #62738a;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .stock-in-page .product-name {
+        min-width: 160px;
+        max-width: 320px;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    .stock-in-page .quantity-column {
+        text-align: center;
+    }
+
+    .stock-in-page .quantity-badge {
+        display: inline-block;
+        min-width: 38px;
+        padding: 5px 10px;
+        border: 1px solid #c8e8df;
+        border-radius: 8px;
+        background: #e5f7f2;
+        color: #226a5c;
+        font-size: 12px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .stock-in-page .actions-column {
+        text-align: right;
+    }
+
+    .stock-in-page .row-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .stock-in-page .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 38px;
+        padding: 8px 12px;
+        border: 1px solid;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+
+    .stock-in-page .edit-button {
+        border-color: #d6e1ef;
+        background: #eef4fb;
+        color: #285681;
+    }
+
+    .stock-in-page .edit-button:hover,
+    .stock-in-page .edit-button:active {
+        border-color: #b9cee5;
+        background: #dfebf8;
+        color: #20476c;
+    }
+
+    .stock-in-page .delete-button {
+        border-color: #f1d4d9;
+        background: #fff3f4;
+        color: #a32638;
+    }
+
+    .stock-in-page .delete-button:hover,
+    .stock-in-page .delete-button:active {
+        border-color: #e7b4be;
+        background: #fbe3e7;
+        color: #8a2030;
+    }
+
+    .stock-in-page .btn:focus-visible,
+    .stock-in-page .table-responsive:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .stock-in-page .create-button {
+            width: 100%;
+        }
+
+        .stock-in-page .table-card-header {
+            padding: 16px;
+        }
+
+        .stock-in-page .stock-table > thead > tr > th,
+        .stock-in-page .stock-table > tbody > tr > td {
+            padding: 14px 16px;
+        }
+    }
+</style>
+
+<div class="stock-in-page">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Stock In</h1>
+            <p class="page-description">
+                View and manage incoming stock records.
+            </p>
+        </div>
+
+        <a asp-action="Create" class="btn create-button">
+            <i class="fas fa-plus" aria-hidden="true"></i>
+            Add Stock In
+        </a>
+    </div>
+
+    <div class="table-card">
+        <div class="table-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-arrow-down"></i>
+            </span>
+
+            <h2 class="section-title" id="stock-in-table-title">
+                Stock In Records
+            </h2>
+        </div>
+
+        <div class="table-responsive"
+             role="region"
+             aria-labelledby="stock-in-table-title"
+             tabindex="0">
+            <table class="table stock-table"
+                   aria-labelledby="stock-in-table-title">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Product</th>
+                        <th scope="col" class="quantity-column">Quantity</th>
+                        <th scope="col">Date In</th>
+                        <th scope="col" class="actions-column">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="record-id">@item.StockInID</td>
+                            <td class="product-name">@item.ProductName</td>
+
+                            <td class="quantity-column">
+                                <span class="quantity-badge">@item.Quantity</span>
+                            </td>
+
+                            <td class="date-column">
+                                @item.DateIn.ToShortDateString()
+                            </td>
+
+                            <td>
+                                <div class="row-actions">
+                                    <a asp-action="Edit"
+                                       asp-route-uid="@item.UID"
+                                       class="btn action-button edit-button">
+                                        <i class="fas fa-pen" aria-hidden="true"></i>
+                                        Edit
+                                    </a>
+
+                                    <a asp-action="Delete"
+                                       asp-route-uid="@item.UID"
+                                       class="btn action-button delete-button">
+                                        <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

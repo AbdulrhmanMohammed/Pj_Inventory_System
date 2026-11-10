@@ -1,37 +1,241 @@
 ﻿@model Pj_Inventory_System.Application.Dtos.OrderDtos.OrderDto
 
-<h2>Order Details</h2>
+<style>
+    .order-details-page {
+        max-width: 760px;
+        margin: 0 auto;
+        color: #17263a;
+    }
 
-<table class="table table-bordered">
+    .order-details-page .page-header {
+        margin-bottom: 24px;
+    }
 
-    <tr>
-        <th>Order ID</th>
-        <td>@Model.OrderID</td>
-    </tr>
+    .order-details-page .page-title {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-    <tr>
-        <th>User ID</th>
-        <td>@Model.UserId</td>
-    </tr>
+    .order-details-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-    <tr>
-        <th>Status</th>
-        <td>@Model.Status</td>
-    </tr>
+    .order-details-page .details-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
 
-    <tr>
-        <th>Total Amount</th>
-        <td>@Model.TotalAmount</td>
-    </tr>
+    .order-details-page .details-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
 
-    <tr>
-        <th>Created At</th>
-        <td>@Model.CreatedAt</td>
-    </tr>
+    .order-details-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
 
-</table>
+    .order-details-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
 
-<a asp-action="Index"
-   class="btn btn-primary">
-    Back
-</a>
+    .order-details-page .details-table {
+        width: 100%;
+        margin: 0;
+        table-layout: fixed;
+        color: #17263a;
+        vertical-align: middle;
+    }
+
+    .order-details-page .details-table > tbody > tr > th,
+    .order-details-page .details-table > tbody > tr > td {
+        padding: 20px 24px;
+        border-bottom: 1px solid #edf1f6;
+        font-size: 14px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .order-details-page .details-table > tbody > tr > th {
+        width: 35%;
+        background: #f8fafc;
+        color: #52647c;
+        font-weight: 600;
+    }
+
+    .order-details-page .details-table > tbody > tr > td {
+        background: #fff;
+    }
+
+    .order-details-page .details-table > tbody > tr:last-child > th,
+    .order-details-page .details-table > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+
+    .order-details-page .order-id {
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .order-details-page .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border: 1px solid #d6e1ef;
+        border-radius: 8px;
+        background: #eef4fb;
+        color: #285681;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .order-details-page .amount {
+        color: #226a5c;
+        font-size: 18px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .order-details-page .created-at {
+        color: #62738a;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .order-details-page .details-card-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 18px 24px;
+        border-top: 1px solid #e6ecf3;
+        background: #f8fafc;
+    }
+
+    .order-details-page .back-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 120px;
+        min-height: 44px;
+        padding: 10px 20px;
+        border: 1px solid #7ce3d0;
+        border-radius: 10px;
+        background: #7ce3d0;
+        color: #123a36;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .order-details-page .back-button:hover,
+    .order-details-page .back-button:active {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .order-details-page .back-button:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .order-details-page .details-card-header,
+        .order-details-page .details-card-footer {
+            padding: 20px;
+        }
+
+        .order-details-page .details-table > tbody > tr > th,
+        .order-details-page .details-table > tbody > tr > td {
+            padding: 16px;
+        }
+
+        .order-details-page .details-table > tbody > tr > th {
+            width: 40%;
+        }
+
+        .order-details-page .back-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="order-details-page">
+    <div class="page-header">
+        <h1 class="page-title">Order Details</h1>
+        <p class="page-description">
+            View the order information below.
+        </p>
+    </div>
+
+    <div class="details-card">
+        <div class="details-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-clipboard-list"></i>
+            </span>
+
+            <h2 class="section-title" id="order-summary-title">
+                Order Summary
+            </h2>
+        </div>
+
+        <table class="table details-table"
+               aria-labelledby="order-summary-title">
+            <tbody>
+                <tr>
+                    <th scope="row">Order ID</th>
+                    <td class="order-id">@Model.OrderID</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">User ID</th>
+                    <td>@Model.UserId</td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Status</th>
+                    <td>
+                        <span class="status-badge">@Model.Status</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Total Amount</th>
+                    <td>
+                        <span class="amount">@Model.TotalAmount</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row">Created At</th>
+                    <td class="created-at">@Model.CreatedAt</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="details-card-footer">
+            <a asp-action="Index" class="btn back-button">
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                Back
+            </a>
+        </div>
+    </div>
+</div>

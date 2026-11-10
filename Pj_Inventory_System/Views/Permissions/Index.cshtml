@@ -5,301 +5,560 @@
     int counter = 1;
 }
 
-<div class="container mt-4">
+<style>
+    .permissions-page {
+        color: #17263a;
+    }
 
-    <div class="d-flex justify-content-between mb-3">
+    .permissions-page .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
 
-        <h2>Permission List</h2>
+    .permissions-page .page-title {
+        margin: 0 0 6px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-        <!-- Open Create Modal -->
-        <button class="btn btn-primary"
+    .permissions-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+    }
+
+    .permissions-page .table-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
+
+    .permissions-page .table-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .permissions-page .section-icon,
+    .permission-modal .section-icon {
+        display: inline-grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
+
+    .permissions-page .section-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .permissions-page .permissions-table {
+        min-width: 640px;
+        margin: 0;
+        color: #17263a;
+        vertical-align: middle;
+    }
+
+    .permissions-page .permissions-table > thead > tr > th {
+        padding: 14px 24px;
+        border-bottom: 1px solid #e6ecf3;
+        background: #f8fafc;
+        color: #52647c;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    .permissions-page .permissions-table > tbody > tr > td {
+        padding: 18px 24px;
+        border-bottom: 1px solid #edf1f6;
+        background: #fff;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .permissions-page .permissions-table > tbody > tr:last-child > td {
+        border-bottom: 0;
+    }
+
+    .permissions-page .permissions-table > tbody > tr:hover > td {
+        background: #f7fbfa;
+    }
+
+    .permissions-page .number-cell {
+        color: #62738a;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .permissions-page .permission-name {
+        font-weight: 600;
+    }
+
+    .permissions-page .actions-column {
+        text-align: right;
+    }
+
+    .permissions-page .row-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .permissions-page .btn,
+    .permission-modal .modal-footer .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 18px;
+        border: 1px solid;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .permissions-page .row-actions .btn {
+        min-height: 38px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .permissions-page .create-button,
+    .permission-modal .save-button {
+        border-color: #7ce3d0;
+        background: #7ce3d0;
+        color: #123a36;
+    }
+
+    .permissions-page .create-button:hover,
+    .permission-modal .save-button:hover {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .permissions-page .edit-button {
+        border-color: #d6e1ef;
+        background: #eef4fb;
+        color: #285681;
+    }
+
+    .permissions-page .edit-button:hover {
+        border-color: #b9cee5;
+        background: #dfebf8;
+        color: #20476c;
+    }
+
+    .permissions-page .delete-button {
+        border-color: #f1d4d9;
+        background: #fff3f4;
+        color: #a32638;
+    }
+
+    .permissions-page .delete-button:hover {
+        border-color: #e7b4be;
+        background: #fbe3e7;
+        color: #8a2030;
+    }
+
+    .permission-modal .modal-content {
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        color: #17263a;
+        box-shadow: 0 20px 60px rgba(20, 35, 56, .18);
+    }
+
+    .permission-modal form {
+        margin: 0;
+    }
+
+    .permission-modal .modal-header {
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
+
+    .permission-modal .modal-title {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .permission-modal .modal-body {
+        padding: 24px;
+        overflow-wrap: anywhere;
+    }
+
+    .permission-modal .form-label {
+        margin-bottom: 10px;
+        color: #24364d;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .permission-modal .form-control {
+        min-height: 48px;
+        padding: 12px 14px;
+        border: 1px solid #d6dfeb;
+        border-radius: 10px;
+        background: #fbfcfe;
+        color: #17263a;
+        font-size: 15px;
+    }
+
+    .permission-modal .form-control:focus {
+        border-color: #278575;
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(39, 133, 117, .12);
+    }
+
+    .permission-modal .modal-footer {
+        gap: 8px;
+        padding: 18px 24px;
+        border-top: 1px solid #e6ecf3;
+        border-radius: 0 0 16px 16px;
+        background: #f8fafc;
+    }
+
+    .permission-modal .cancel-button {
+        border-color: #d6e1ef;
+        background: #fff;
+        color: #42566f;
+    }
+
+    .permission-modal .cancel-button:hover {
+        border-color: #bccbdd;
+        background: #eef4fb;
+        color: #24364d;
+    }
+
+    .permission-modal .confirm-delete-button {
+        border-color: #b52b40;
+        background: #b52b40;
+        color: #fff;
+    }
+
+    .permission-modal .confirm-delete-button:hover {
+        border-color: #962235;
+        background: #962235;
+        color: #fff;
+    }
+
+    .permission-modal .delete-icon {
+        background: #fff0f2;
+        color: #a32638;
+    }
+
+    .permission-modal .delete-message {
+        margin: 0;
+        padding: 16px;
+        border: 1px solid #f1c5cb;
+        border-radius: 10px;
+        background: #fff3f4;
+        color: #a32638;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    .permissions-page .btn:focus-visible,
+    .permissions-page .table-responsive:focus-visible,
+    .permission-modal .btn:focus-visible,
+    .permission-modal .btn-close:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .permissions-page .create-button {
+            width: 100%;
+        }
+
+        .permissions-page .table-card-header,
+        .permission-modal .modal-header,
+        .permission-modal .modal-body,
+        .permission-modal .modal-footer {
+            padding: 16px;
+        }
+
+        .permissions-page .permissions-table > thead > tr > th,
+        .permissions-page .permissions-table > tbody > tr > td {
+            padding: 14px 16px;
+        }
+
+        .permission-modal .modal-footer .btn {
+            flex: 1 1 120px;
+        }
+    }
+</style>
+
+<div class="permissions-page">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Permissions</h1>
+            <p class="page-description">
+                View and manage system permissions.
+            </p>
+        </div>
+
+        <button type="button"
+                class="btn create-button"
                 data-bs-toggle="modal"
                 data-bs-target="#createModal">
+            <i class="fas fa-plus" aria-hidden="true"></i>
             Create Permission
         </button>
-
     </div>
-    <!-- ========================= -->
-    <!-- Permissions Table -->
-    <!-- ========================= -->
 
-    <table class="table table-bordered table-hover">
+    <div class="table-card">
+        <div class="table-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-key"></i>
+            </span>
+            <h2 class="section-title" id="permissions-table-title">
+                Permission List
+            </h2>
+        </div>
 
-        <thead class="table-primary">
+        <div class="table-responsive"
+             role="region"
+             aria-labelledby="permissions-table-title"
+             tabindex="0">
+            <table class="table permissions-table"
+                   aria-labelledby="permissions-table-title">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col" class="actions-column">Actions</th>
+                    </tr>
+                </thead>
 
-            <tr>
-                <th>#</th>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Permissions</th>
-                <th>Actions</th>
-            </tr>
+                <tbody>
+                    @foreach (var permission in Model)
+                    {
+                        <tr>
+                            <td class="number-cell">@counter</td>
+                            @{
+                                counter++;
+                            }
 
-        </thead>
+                            <td class="number-cell">@permission.Id</td>
+                            <td class="permission-name">@permission.Name</td>
+                            <td>
+                                <div class="row-actions">
+                                    <button type="button"
+                                            class="btn edit-button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editModal-@permission.Id">
+                                        <i class="fas fa-pen" aria-hidden="true"></i>
+                                        Edit
+                                    </button>
 
-        <tbody>
-
-            @foreach (var permission in Model)
-            {
-                <tr>
-                    <td>@counter</td>
-
-                    @{
-                        counter++;
+                                    <button type="button"
+                                            class="btn delete-button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal-@permission.Id">
+                                        <i class="fas fa-trash-can" aria-hidden="true"></i>
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                     }
-
-                
-                   
-                    <td>@permission.Id</td>
-
-                    <td>@permission.Name</td>
-
-
-                    <td>
-
-                        <!-- Edit Button -->
-                        <button class="btn btn-warning"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editModal-@permission.Id">
-                            Edit
-                        </button>
-
-
-                        <!-- Delete Button -->
-                        <button class="btn btn-danger"
-                                data-bs-toggle="modal"
-                                data-bs-target="#deleteModal-@permission.Id">
-                            Delete
-                        </button>
-
-                    </td>
-
-                </tr>
-            }
-
-        </tbody>
-
-    </table>
-
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-
-
-<!-- ================================================= -->
-<!-- CREATE MODAL -->
-<!-- ================================================= -->
-
-<div class="modal fade"
+<!-- Create Modal -->
+<div class="modal fade permission-modal"
      id="createModal"
-     tabindex="-1">
-
-    <div class="modal-dialog">
-
+     tabindex="-1"
+     aria-labelledby="createModalTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
             <form asp-action="Create" method="post">
-
                 <div class="modal-header">
+                    <span class="section-icon" aria-hidden="true">
+                        <i class="fas fa-key"></i>
+                    </span>
 
-                    <h5 class="modal-title">
+                    <h2 class="modal-title" id="createModalTitle">
                         Create Permission
-                    </h5>
+                    </h2>
 
                     <button type="button"
                             class="btn-close"
-                            data-bs-dismiss="modal">
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
                     </button>
-
                 </div>
-
 
                 <div class="modal-body">
+                    <label for="createPermissionName" class="form-label">
+                        Permission Name
+                    </label>
 
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            Permission Name
-                        </label>
-
-                        <input name="Name"
-                               class="form-control"
-                               placeholder="Enter permission name" />
-
-                    </div>
-
+                    <input id="createPermissionName"
+                           name="Name"
+                           class="form-control"
+                           placeholder="Enter permission name" />
                 </div>
 
-
                 <div class="modal-footer">
-
                     <button type="button"
-                            class="btn btn-secondary"
+                            class="btn cancel-button"
                             data-bs-dismiss="modal">
                         Cancel
                     </button>
 
-                    <button type="submit"
-                            class="btn btn-primary">
+                    <button type="submit" class="btn save-button">
+                        <i class="fas fa-plus" aria-hidden="true"></i>
                         Create
                     </button>
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
 </div>
 
-
-
-<!-- ================================================= -->
-<!-- EDIT + DELETE MODALS -->
-<!-- ================================================= -->
 @foreach (var permission in Model)
 {
-    <!-- ========================= -->
-    <!-- EDIT MODAL -->
-    <!-- ========================= -->
-
-    <div class="modal fade"
+    <!-- Edit Modal -->
+    <div class="modal fade permission-modal"
          id="editModal-@permission.Id"
-         tabindex="-1">
-
-        <div class="modal-dialog">
-
+         tabindex="-1"
+         aria-labelledby="editModalTitle-@permission.Id"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-
                 <form asp-action="Edit" method="post">
-
-                    <!-- Important -->
                     <input type="hidden"
                            name="Id"
                            value="@permission.Id" />
 
-
                     <div class="modal-header">
+                        <span class="section-icon" aria-hidden="true">
+                            <i class="fas fa-pen"></i>
+                        </span>
 
-                        <h5 class="modal-title">
+                        <h2 class="modal-title"
+                            id="editModalTitle-@permission.Id">
                             Edit Permission
-                        </h5>
+                        </h2>
 
                         <button type="button"
                                 class="btn-close"
-                                data-bs-dismiss="modal">
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
                         </button>
-
                     </div>
-
 
                     <div class="modal-body">
+                        <label for="editPermissionName-@permission.Id"
+                               class="form-label">
+                            Permission Name
+                        </label>
 
-                        <div class="mb-3">
-
-                            <label class="form-label">
-                                Role Name
-                            </label>
-
-                            <input type="text"
-                                   name="Name"
-                                   value="@permission.Name"
-                                   class="form-control" />
-
-                        </div>
-
+                        <input type="text"
+                               id="editPermissionName-@permission.Id"
+                               name="Name"
+                               value="@permission.Name"
+                               class="form-control" />
                     </div>
 
-
                     <div class="modal-footer">
-
                         <button type="button"
-                                class="btn btn-secondary"
+                                class="btn cancel-button"
                                 data-bs-dismiss="modal">
                             Cancel
                         </button>
 
-                        <button type="submit"
-                                class="btn btn-warning">
+                        <button type="submit" class="btn save-button">
+                            <i class="fas fa-check" aria-hidden="true"></i>
                             Save Changes
                         </button>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
 
-
-
-    <!-- ========================= -->
-    <!-- DELETE MODAL -->
-    <!-- ========================= -->
-
-    <div class="modal fade"
+    <!-- Delete Modal -->
+    <div class="modal fade permission-modal"
          id="deleteModal-@permission.Id"
-         tabindex="-1">
-
-        <div class="modal-dialog">
-
+         tabindex="-1"
+         aria-labelledby="deleteModalTitle-@permission.Id"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-
                 <form asp-action="Delete" method="post">
-
                     <input type="hidden"
                            name="id"
                            value="@permission.Id" />
 
-
                     <div class="modal-header">
+                        <span class="section-icon delete-icon" aria-hidden="true">
+                            <i class="fas fa-trash-can"></i>
+                        </span>
 
-                        <h5 class="modal-title">
+                        <h2 class="modal-title"
+                            id="deleteModalTitle-@permission.Id">
                             Delete Permission
-                        </h5>
+                        </h2>
 
                         <button type="button"
                                 class="btn-close"
-                                data-bs-dismiss="modal">
+                                data-bs-dismiss="modal"
+                                aria-label="Close">
                         </button>
-
                     </div>
 
-
                     <div class="modal-body">
-
-                        <p>
+                        <p class="delete-message">
                             Are you sure you want to delete
                             <strong>@permission.Name</strong>?
                         </p>
-
                     </div>
 
-
                     <div class="modal-footer">
-
                         <button type="button"
-                                class="btn btn-secondary"
+                                class="btn cancel-button"
                                 data-bs-dismiss="modal">
                             Cancel
                         </button>
 
                         <button type="submit"
-                                class="btn btn-danger">
+                                class="btn confirm-delete-button">
+                            <i class="fas fa-trash-can" aria-hidden="true"></i>
                             Delete
                         </button>
-
                     </div>
-
                 </form>
-
             </div>
-
         </div>
-
     </div>
 }

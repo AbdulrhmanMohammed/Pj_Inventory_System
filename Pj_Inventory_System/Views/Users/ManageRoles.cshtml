@@ -1,65 +1,129 @@
 ﻿@using Pj_Inventory_System.Application.Dtos
-
-
 @model UserRolesVM
 
 @{
     ViewData["Title"] = "Manage User Roles";
 }
 
-<div class="container mt-4">
+<style>
+    .user-roles-page {
+        max-width: 900px;
+        margin: 0 auto;
+        color: #17263a;
+    }
 
-    <div class="card">
+    .user-roles-page .page-header {
+        margin-bottom: 24px;
+    }
 
-        <div class="card-header bg-primary text-white">
-            <h4>Manage Roles</h4>
-        </div>
+    .user-roles-page .page-title {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 3vw, 30px);
+        font-weight: 700;
+        letter-spacing: -.6px;
+    }
 
-        <div class="card-body">
+    .user-roles-page .page-description {
+        margin: 0;
+        color: #62738a;
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-            <h5 class="mb-4">
-                User: @Model.UserName
-            </h5>
+    .user-roles-page .roles-card {
+        overflow: hidden;
+        border: 1px solid #dde5ef;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 6px 24px rgba(20, 35, 56, .04);
+    }
 
-            <form asp-action="ManageRoles" method="post">
+    .user-roles-page .roles-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 20px 24px;
+        border-bottom: 1px solid #e6ecf3;
+    }
 
-                <input type="hidden"
-                       asp-for="UserId" />
+    .user-roles-page .section-icon {
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #e5f7f2;
+        color: #226a5c;
+    }
 
-                @for (int i = 0; i < Model.Roles.Count; i++)
-                {
-                    <div class="form-check mb-3">
+    .user-roles-page .user-heading {
+        min-width: 0;
+    }
 
-                        <input type="hidden"
-                               asp-for="Roles[i].RoleId" />
+    .user-roles-page .user-label {
+        margin-bottom: 4px;
+        color: #62738a;
+        font-size: 12px;
+    }
 
-                        <input class="form-check-input"
-                               asp-for="Roles[i].IsSelected" />
+    .user-roles-page .user-name {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
 
-                        <label class="form-check-label"
-                               asp-for="Roles[i].IsSelected">
+    .user-roles-page .roles-form {
+        margin: 0;
+    }
 
-                            @Model.Roles[i].RoleName
+    .user-roles-page .roles-card-body {
+        padding: 28px 24px;
+    }
 
-                        </label>
+    .user-roles-page .roles-fieldset {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
 
-                    </div>
-                }
+    .user-roles-page .roles-legend {
+        float: none;
+        width: auto;
+        margin-bottom: 18px;
+        font-size: 14px;
+        font-weight: 600;
+    }
 
-                <button type="submit"
-                        class="btn btn-success">
-                    Save Roles
-                </button>
+    .user-roles-page .roles-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
 
-                <a asp-action="Index"
-                   class="btn btn-secondary">
-                    Back
-                </a>
+    .user-roles-page .role-option {
+        position: relative;
+        min-width: 0;
+    }
 
-            </form>
+    .user-roles-page .role-checkbox {
+        position: absolute;
+        z-index: 1;
+        top: 50%;
+        left: 16px;
+        width: 20px;
+        height: 20px;
+        margin: 0;
+        transform: translateY(-50%);
+        border-color: #a9bbce;
+        cursor: pointer;
+    }
 
-        </div>
-
-    </div>
-
-</div>
+    .user-roles-page .role-option-label {
+        display: flex;
+        align-items: center;
+        min-height: 62px;
+        height: 100%;
+        padding: 16
