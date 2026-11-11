@@ -126,4 +126,182 @@
         align-items: center;
         min-height: 62px;
         height: 100%;
-        padding: 16
+        padding: 16px 16px 16px 48px;
+        border: 1px solid #dde5ef;
+        border-radius: 10px;
+        background: #fbfcfe;
+        color: #42566f;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        cursor: pointer;
+    }
+
+    .user-roles-page .role-option-label:hover {
+        border-color: #a6d7ca;
+        background: #f3faf7;
+    }
+
+    .user-roles-page .role-checkbox:checked {
+        border-color: #278575;
+        background-color: #278575;
+    }
+
+    .user-roles-page .role-checkbox:checked ~ .role-option-label {
+        border-color: #a6d7ca;
+        background: #e5f7f2;
+        color: #195345;
+        font-weight: 600;
+    }
+
+    .user-roles-page .role-checkbox:focus {
+        border-color: #278575;
+        box-shadow: 0 0 0 4px rgba(39, 133, 117, .12);
+    }
+
+    .user-roles-page .role-checkbox:focus-visible ~ .role-option-label {
+        outline: 2px solid #278575;
+        outline-offset: 2px;
+    }
+
+    .user-roles-page .roles-card-footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 12px;
+        padding: 18px 24px;
+        border-top: 1px solid #e6ecf3;
+        background: #f8fafc;
+    }
+
+    .user-roles-page .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 10px 20px;
+        border: 1px solid;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .user-roles-page .save-button {
+        border-color: #7ce3d0;
+        background: #7ce3d0;
+        color: #123a36;
+    }
+
+    .user-roles-page .save-button:hover,
+    .user-roles-page .save-button:active {
+        border-color: #65d3be;
+        background: #65d3be;
+        color: #123a36;
+    }
+
+    .user-roles-page .back-button {
+        border-color: #d6e1ef;
+        background: #fff;
+        color: #42566f;
+    }
+
+    .user-roles-page .back-button:hover,
+    .user-roles-page .back-button:active {
+        border-color: #bccbdd;
+        background: #eef4fb;
+        color: #24364d;
+    }
+
+    .user-roles-page .action-button:focus-visible {
+        outline: 3px solid #278575;
+        outline-offset: 3px;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 575.98px) {
+        .user-roles-page .roles-card-header,
+        .user-roles-page .roles-card-body,
+        .user-roles-page .roles-card-footer {
+            padding: 20px;
+        }
+
+        .user-roles-page .roles-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .user-roles-page .action-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="user-roles-page">
+    <div class="page-header">
+        <h1 class="page-title">@ViewData["Title"]</h1>
+        <p class="page-description">
+            Select the roles to assign to this user.
+        </p>
+    </div>
+
+    <div class="roles-card">
+        <div class="roles-card-header">
+            <span class="section-icon" aria-hidden="true">
+                <i class="fas fa-user-shield"></i>
+            </span>
+
+            <div class="user-heading">
+                <div class="user-label">User</div>
+                <h2 class="user-name">@Model.UserName</h2>
+            </div>
+        </div>
+
+        <form asp-action="ManageRoles"
+              method="post"
+              class="roles-form">
+
+            <input type="hidden" asp-for="UserId" />
+
+            <div class="roles-card-body">
+                <fieldset class="roles-fieldset">
+                    <legend class="roles-legend">
+                        Available Roles
+                    </legend>
+
+                    <div class="roles-grid">
+                        @for (int i = 0; i < Model.Roles.Count; i++)
+                        {
+                            <div class="role-option">
+                                <input type="hidden"
+                                       asp-for="Roles[i].RoleId" />
+
+                                <input class="form-check-input role-checkbox"
+                                       asp-for="Roles[i].IsSelected" />
+
+                                <label class="role-option-label"
+                                       asp-for="Roles[i].IsSelected">
+                                    @Model.Roles[i].RoleName
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="roles-card-footer">
+                <button type="submit"
+                        class="btn action-button save-button">
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                    Save Roles
+                </button>
+
+                <a asp-action="Index"
+                   class="btn action-button back-button">
+                    <i class="fas fa-arrow-left" aria-hidden="true"></i>
+                    Back
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
